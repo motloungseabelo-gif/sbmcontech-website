@@ -308,7 +308,7 @@
   }
 
   function injectInstagramLinksIntoPage() {
-    const footerAreas = document.querySelectorAll(".footer-grid, footer, .contact-mini-grid, .hero-buttons");
+    const footerAreas = document.querySelectorAll(".hero-buttons");
     footerAreas.forEach((area) => {
       if (!area || area.querySelector(".sbm-react-inline-instagram")) return;
 

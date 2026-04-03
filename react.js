@@ -398,15 +398,7 @@
 
     return (
       <div className="sbm-react-float-stack" aria-label="Quick actions">
-        <a
-          className="sbm-react-float-btn sbm-react-float-btn--instagram"
-          href={CONFIG.instagramUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Open Instagram"
-        >
-          Instagram
-        </a>
+       
 
         <a
           className="sbm-react-float-btn sbm-react-float-btn--whatsapp"

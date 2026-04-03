@@ -1163,3 +1163,186 @@ footer::before {
 .legal-item p {
     color: var(--text-soft);
 }
+
+
+/* seo, mobile and performance add-ons */
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body, html {
+    max-width: 100%;
+}
+
+a, button, input, textarea, select {
+    touch-action: manipulation;
+}
+
+.social-cta {
+    white-space: nowrap;
+}
+
+.footer-socials a {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-mini-card a,
+.footer-bottom-links a,
+.footer-links a,
+.content-card a {
+    word-break: break-word;
+}
+
+img {
+    height: auto;
+}
+
+.hero-logo-card,
+.hero-card,
+.feature-box,
+.service-card,
+.content-card,
+.app-card,
+.cta-box,
+.stat-card,
+.highlight-card,
+.contact-mini-card {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 992px) {
+    .brand-text h1 {
+        font-size: 1.25rem;
+    }
+
+    .hero-logo-card {
+        min-height: 360px;
+    }
+}
+
+@media (max-width: 768px) {
+    .wrapper {
+        width: min(94%, var(--wrapper));
+    }
+
+    .site-header {
+        backdrop-filter: blur(12px);
+    }
+
+    .header-inner {
+        gap: 14px;
+        padding: 12px 0;
+    }
+
+    .brand {
+        gap: 10px;
+        max-width: calc(100% - 110px);
+    }
+
+    .brand-text h1 {
+        font-size: 1rem;
+        line-height: 1.15;
+    }
+
+    .brand-text p {
+        font-size: 0.78rem;
+    }
+
+    .nav-toggle {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 10px 12px;
+    }
+
+    .navbar a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .hero-text h2 {
+        font-size: clamp(2rem, 9vw, 3rem);
+    }
+
+    .hero-text p,
+    .section-heading p,
+    .page-banner p {
+        font-size: 0.98rem;
+    }
+
+    .hero-logo-card {
+        min-height: 260px;
+        padding: 18px;
+    }
+
+    .hero-buttons a,
+    .hero-buttons button,
+    .actions .btn {
+        min-height: 48px;
+    }
+
+    .announcement-inner {
+        flex-direction: column;
+        gap: 2px;
+    }
+}
+
+@media (max-width: 520px) {
+    .wrapper {
+        width: min(95%, var(--wrapper));
+    }
+
+    .section {
+        padding: 52px 0;
+    }
+
+    .page-banner {
+        padding: 64px 0 34px;
+    }
+
+    .brand-logo {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+    }
+
+    .hero-metrics {
+        gap: 10px;
+    }
+
+    .metric-chip,
+    .hero-card,
+    .feature-box,
+    .service-card,
+    .content-card,
+    .app-card,
+    .cta-box,
+    .stat-card,
+    .highlight-card,
+    .contact-mini-card,
+    .success-card,
+    .container {
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .success-card h3,
+    .container h1 {
+        font-size: 1.7rem;
+    }
+
+    .footer-bottom-links {
+        gap: 10px;
+    }
+}
+
+.btn-instagram {
+    background: linear-gradient(135deg, #405de6, #833ab4 55%, #fd1d1d);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(131, 58, 180, 0.28);
+}

@@ -3,8 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0b1830">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta name="description" content="Learn about SBM ConTech Industries and our mission to deliver premium smart home and intelligent living solutions.">
     <meta name="theme-color" content="#0b1830">
+    <meta property="og:title" content="SBM ConTech Industries | About Us">
+    <meta property="og:description" content="Learn about SBM ConTech Industries, a South African smart home and technology company focused on secure, elegant, and intelligent living solutions.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://sbmcontech.co.za/images/Logo.png">
+    <meta property="og:url" content="https://sbmcontech.co.za/about.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SBM ConTech Industries | About Us">
+    <meta name="twitter:description" content="Learn about SBM ConTech Industries, a South African smart home and technology company focused on secure, elegant, and intelligent living solutions.">
+    <meta name="twitter:image" content="https://sbmcontech.co.za/images/Logo.png">
+    <link rel="canonical" href="https://sbmcontech.co.za/about.html">
     <title>SBM ConTech Industries | About</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -20,7 +37,7 @@
 
 <div class="splash-screen" id="splashScreen" aria-hidden="true">
     <div class="splash-content">
-        <img src="images/Logo.png" alt="SBM ConTech Industries Logo" class="splash-logo">
+        <img loading="eager" decoding="async" src="images/Logo.png" alt="SBM ConTech Industries Logo" class="splash-logo">
         <h2>SBM ConTech Industries</h2>
         <p>Smart Homes Are The Future</p>
     </div>
@@ -30,7 +47,7 @@
     <div class="wrapper header-inner">
         <a href="index.html" class="brand-home-link" aria-label="Go to SBM ConTech Industries home page">
             <div class="brand">
-                <img src="images/Logo.png" alt="SBM ConTech Industries Logo" class="brand-logo">
+                <img loading="eager" decoding="async" src="images/Logo.png" alt="SBM ConTech Industries Logo" class="brand-logo">
                 <div class="brand-text">
                     <h1>SBM ConTech Industries</h1>
                     <p>Smart Homes Are The Future</p>
@@ -146,12 +163,12 @@
         <div class="footer-grid">
             <div class="footer-brand">
                 <a href="index.html" aria-label="Go to home page">
-                    <img src="images/Logo.png" alt="SBM ConTech Industries Logo" class="footer-logo">
+                    <img loading="lazy" decoding="async" src="images/Logo.png" alt="SBM ConTech Industries Logo" class="footer-logo">
                 </a>
                 <h3>SBM ConTech Industries</h3>
                 <p>Premium smart living, modern software, secure automation, and elegant digital experiences built for the future.</p>
                 <div class="footer-socials">
-                    <a href="#" aria-label="Instagram">◎</a>
+                    <a href="https://www.instagram.com/sbmcontechindustries/" aria-label="Instagram" target="_blank" rel="noopener noreferrer">◎</a>
                     <a href="#" aria-label="Facebook">◉</a>
                     <a href="mailto:sbmcontechindustries@gmail.com" aria-label="Email">✉</a>
                 </div>
@@ -182,6 +199,12 @@
 </footer>
 
 <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
-<script src="script.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" defer></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" defer></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js" defer></script>
+
+<script src="script.js" defer></script>
+<script type="text/babel" src="react.js" defer></script>
+
 </body>
 </html>

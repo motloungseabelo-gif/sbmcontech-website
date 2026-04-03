@@ -410,14 +410,7 @@
           WhatsApp
         </a>
 
-        <button
-          type="button"
-          className="sbm-react-float-btn sbm-react-float-btn--top"
-          onClick={goTop}
-          aria-label="Back to top"
-        >
-          Top
-        </button>
+        
       </div>
     );
   }

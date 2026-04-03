@@ -3,8 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0b1830">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta name="description" content="Contact SBM ConTech Industries for smart home solutions, automation, security systems, and energy-aware living technology.">
     <meta name="theme-color" content="#0b1830">
+    <meta property="og:title" content="SBM ConTech Industries | Contact & Quotes">
+    <meta property="og:description" content="Contact SBM ConTech Industries for smart home solutions, automation, security systems, websites, apps, and premium digital services in South Africa.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://sbmcontech.co.za/images/Logo.png">
+    <meta property="og:url" content="https://sbmcontech.co.za/contact.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SBM ConTech Industries | Contact & Quotes">
+    <meta name="twitter:description" content="Contact SBM ConTech Industries for smart home solutions, automation, security systems, websites, apps, and premium digital services in South Africa.">
+    <meta name="twitter:image" content="https://sbmcontech.co.za/images/Logo.png">
+    <link rel="canonical" href="https://sbmcontech.co.za/contact.html">
     <title>SBM ConTech Industries | Contact</title>
     <link rel="stylesheet" href="style.css">
 
@@ -135,7 +152,7 @@
 
 <div class="splash-screen" id="splashScreen" aria-hidden="true">
     <div class="splash-content">
-        <img src="images/Logo.png" alt="SBM ConTech Industries Logo" class="splash-logo">
+        <img loading="eager" decoding="async" src="images/Logo.png" alt="SBM ConTech Industries Logo" class="splash-logo">
         <h2>SBM ConTech Industries</h2>
         <p>Smart Homes Are The Future</p>
     </div>
@@ -145,7 +162,7 @@
     <div class="wrapper header-inner">
         <a href="index.html" class="brand-home-link" aria-label="Go to SBM ConTech Industries home page">
             <div class="brand">
-                <img src="images/Logo.png" alt="SBM ConTech Industries Logo" class="brand-logo">
+                <img loading="eager" decoding="async" src="images/Logo.png" alt="SBM ConTech Industries Logo" class="brand-logo">
                 <div class="brand-text">
                     <h1>SBM ConTech Industries</h1>
                     <p>Smart Homes Are The Future</p>
@@ -182,6 +199,10 @@
             <p>sbmcontechindustries@gmail.com</p>
         </div>
         <div class="contact-mini-card">
+            <span>Instagram</span>
+            <p><a href="https://www.instagram.com/sbmcontechindustries/" target="_blank" rel="noopener noreferrer">@sbmcontechindustries</a></p>
+        </div>
+        <div class="contact-mini-card">
             <span>Business Focus</span>
             <p>Smart homes, software, automation, security, and digital systems</p>
         </div>
@@ -193,6 +214,7 @@
             <h3>Let’s design something premium</h3>
             <p><strong>Email:</strong> sbmcontechindustries@gmail.com</p>
             <p><strong>Business:</strong> SBM ConTech Industries</p>
+            <p><strong>Instagram:</strong> <a href="https://www.instagram.com/sbmcontechindustries/" target="_blank" rel="noopener noreferrer">@sbmcontechindustries</a></p>
             <p><strong>Focus:</strong> Smart homes, automation, security, websites, apps, and energy management</p>
             <p><strong>Experience:</strong> Premium intelligent living built for modern homes and businesses</p>
         </div>
@@ -200,7 +222,7 @@
         <div class="content-card contact-form-card">
             <span class="info-chip">Send a Message</span>
             <h3>Tell us what you need</h3>
-            <form class="contact-form" id="contactForm" action="https://formspree.io/f/mvzvbavp" method="POST">
+            <form class="contact-form" id="contactForm" data-no-alert="true" action="https://formspree.io/f/mvzvbavp" method="POST">
                 <div class="form-row">
                     <input type="text" name="name" placeholder="Your Full Name" required>
                     <input type="email" name="email" placeholder="Your Email Address" required>
@@ -233,12 +255,12 @@
         <div class="footer-grid">
             <div class="footer-brand">
                 <a href="index.html" aria-label="Go to home page">
-                    <img src="images/Logo.png" alt="SBM ConTech Industries Logo" class="footer-logo">
+                    <img loading="lazy" decoding="async" src="images/Logo.png" alt="SBM ConTech Industries Logo" class="footer-logo">
                 </a>
                 <h3>SBM ConTech Industries</h3>
                 <p>Premium smart living, modern software, secure automation, and elegant digital experiences built for the future.</p>
                 <div class="footer-socials">
-                    <a href="#" aria-label="Instagram">◎</a>
+                    <a href="https://www.instagram.com/sbmcontechindustries/" aria-label="Instagram" target="_blank" rel="noopener noreferrer">◎</a>
                     <a href="#" aria-label="Facebook">◉</a>
                     <a href="mailto:sbmcontechindustries@gmail.com" aria-label="Email">✉</a>
                 </div>
@@ -278,8 +300,15 @@
 </div>
 
 <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" defer></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" defer></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js" defer></script>
 
-<script src="script.js"></script>
+
+<script type="text/babel" src="react.js" defer></script>
+
+
+<script src="script.js" defer></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("contactForm");

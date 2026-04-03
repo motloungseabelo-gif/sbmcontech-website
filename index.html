@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0b1830">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta name="description" content="SBM ConTech Industries is a South African smart home and technology company founded by Seabelo Blessing Motloung, a software developer focused on secure, elegant, and intelligent smart home solutions for modern homes and businesses.">
     <meta name="keywords" content="SBM ConTech Industries, smart homes South Africa, home automation South Africa, smart security systems, smart lighting, intelligent living, mobile app integration, smart home company Johannesburg, Seabelo Blessing Motloung, software developer">
     <meta name="author" content="Seabelo Blessing Motloung">
@@ -20,6 +27,30 @@
     <link rel="canonical" href="https://sbmcontech.co.za/">
     <title>SBM ConTech Industries | Smart Home Solutions South Africa</title>
     <link rel="stylesheet" href="style.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "name": "SBM ConTech Industries",
+          "url": "https://sbmcontech.co.za/",
+          "logo": "https://sbmcontech.co.za/images/Logo.png",
+          "sameAs": ["https://www.instagram.com/sbmcontechindustries/"],
+          "founder": {
+            "@type": "Person",
+            "name": "Seabelo Blessing Motloung"
+          },
+          "email": "sbmcontechindustries@gmail.com"
+        },
+        {
+          "@type": "WebSite",
+          "name": "SBM ConTech Industries",
+          "url": "https://sbmcontech.co.za/"
+        }
+      ]
+    }
+    </script>
 </head>
 <body>
 
@@ -33,7 +64,7 @@
 
 <div class="splash-screen" id="splashScreen" aria-hidden="true">
     <div class="splash-content">
-        <img src="images/Logo.png" alt="SBM ConTech Industries Logo" class="splash-logo">
+        <img loading="eager" decoding="async" src="images/Logo.png" alt="SBM ConTech Industries Logo" class="splash-logo">
         <h2>SBM ConTech Industries</h2>
         <p>Smart Homes Are The Future</p>
     </div>
@@ -43,7 +74,7 @@
     <div class="wrapper header-inner">
         <a href="index.html" class="brand-home-link" aria-label="Go to SBM ConTech Industries home page">
             <div class="brand">
-                <img src="images/Logo.png" alt="SBM ConTech Industries Logo" class="brand-logo">
+                <img loading="eager" decoding="async" src="images/Logo.png" alt="SBM ConTech Industries Logo" class="brand-logo">
                 <div class="brand-text">
                     <h1>SBM ConTech Industries</h1>
                     <p>Smart Homes Are The Future</p>
@@ -86,6 +117,7 @@
                 <button onclick="openApp()">Launch Smart App</button>
                 <a href="services.html" class="secondary-btn">Explore Services</a>
                 <a href="contact.html" class="ghost-btn">Request a Quote</a>
+                <a href="https://www.instagram.com/sbmcontechindustries/" class="ghost-btn social-cta" target="_blank" rel="noopener noreferrer">Follow on Instagram</a>
             </div>
 
             <div class="hero-metrics">
@@ -105,7 +137,7 @@
         </div>
 
         <div class="hero-card hero-logo-card">
-            <img src="images/SBM Logo 2.png" alt="SBM ConTech Industries smart home technology logo" class="hero-logo">
+            <img fetchpriority="high" loading="eager" decoding="async" src="images/SBM Logo 2.png" alt="SBM ConTech Industries smart home technology logo" class="hero-logo">
         </div>
     </div>
 
@@ -228,12 +260,12 @@
         <div class="footer-grid">
             <div class="footer-brand">
                 <a href="index.html" aria-label="Go to home page">
-                    <img src="images/Logo.png" alt="SBM ConTech Industries Logo" class="footer-logo">
+                    <img loading="lazy" decoding="async" src="images/Logo.png" alt="SBM ConTech Industries Logo" class="footer-logo">
                 </a>
                 <h3>SBM ConTech Industries</h3>
                 <p>Premium smart living, modern software, secure automation, and elegant digital experiences built for the future.</p>
                 <div class="footer-socials">
-                    <a href="#" aria-label="Instagram">◎</a>
+                    <a href="https://www.instagram.com/sbmcontechindustries/" aria-label="Instagram" target="_blank" rel="noopener noreferrer">◎</a>
                     <a href="#" aria-label="Facebook">◉</a>
                     <a href="mailto:sbmcontechindustries@gmail.com" aria-label="Email">✉</a>
                 </div>
@@ -264,6 +296,12 @@
 </footer>
 
 <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
-<script src="script.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" defer></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" defer></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js" defer></script>
+
+<script src="script.js" defer></script>
+<script type="text/babel" src="react.js" defer></script>
+
 </body>
 </html>

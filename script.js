@@ -16,6 +16,10 @@
         }
     }
 
+    function getReducedMotionPreference() {
+        return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
     function updateStatus(id, message) {
         const element = byId(id);
         if (element) {
@@ -70,7 +74,7 @@
         window.addEventListener("load", () => {
             setTimeout(() => {
                 splash.classList.add("hide");
-            }, 1300);
+            }, getReducedMotionPreference() ? 100 : 1300);
         });
     }
 
@@ -94,14 +98,31 @@
                 }
             });
         });
+
+        document.addEventListener("click", event => {
+            if (window.innerWidth > 768) return;
+            if (!nav.contains(event.target) && !toggle.contains(event.target)) {
+                nav.classList.remove("show");
+                toggle.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        window.addEventListener("resize", () => {
+            if (window.innerWidth > 768) {
+                nav.classList.remove("show");
+                toggle.setAttribute("aria-expanded", "false");
+            }
+        }, { passive: true });
     }
 
     function initContactForm() {
         const form = document.querySelector(".contact-form");
-        if (!form) return;
+        if (!form || form.dataset.ajaxHandled === "true") return;
 
         form.addEventListener("submit", () => {
-            alert("Thank you for contacting SBM ConTech Industries. We will respond to you soon.");
+            if (!form.hasAttribute("data-no-alert")) {
+                alert("Thank you for contacting SBM ConTech Industries. We will respond to you soon.");
+            }
         });
     }
 
@@ -163,6 +184,25 @@
         window.addEventListener("scroll", toggleButton, { passive: true });
     }
 
+    function initSmartImages() {
+        document.querySelectorAll("img").forEach(image => {
+            if (!image.hasAttribute("decoding")) image.setAttribute("decoding", "async");
+            if (!image.hasAttribute("loading") && !image.classList.contains("hero-logo") && !image.classList.contains("brand-logo") && !image.classList.contains("splash-logo")) {
+                image.setAttribute("loading", "lazy");
+            }
+        });
+    }
+
+    function initExternalLinks() {
+        document.querySelectorAll(`a[href^="http"]`).forEach(link => {
+            if (!link.hasAttribute("target")) link.setAttribute("target", "_blank");
+            const rel = link.getAttribute("rel") || "";
+            if (!/noopener/i.test(rel)) {
+                link.setAttribute("rel", `${rel} noopener noreferrer`.trim());
+            }
+        });
+    }
+
     function init() {
         initSplash();
         initMobileNav();
@@ -171,6 +211,8 @@
         initScrollProgress();
         initReveal();
         initBackToTop();
+        initSmartImages();
+        initExternalLinks();
         updateAppUI();
     }
 

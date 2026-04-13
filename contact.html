@@ -10,16 +10,16 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <meta name="description" content="Contact SBM ConTech Industries for smart home solutions, automation, security systems, and energy-aware living technology.">
+    <meta name="description" content="Contact SBM ConTech Industries for smart home solutions, automation, security systems, AI business tools, websites, dashboards, and premium digital services.">
     <meta name="theme-color" content="#0b1830">
     <meta property="og:title" content="SBM ConTech Industries | Contact & Quotes">
-    <meta property="og:description" content="Contact SBM ConTech Industries for smart home solutions, automation, security systems, websites, apps, and premium digital services in South Africa.">
+    <meta property="og:description" content="Contact SBM ConTech Industries for smart home solutions, automation, security systems, AI business tools, websites, apps, and premium digital services in South Africa.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://sbmcontech.co.za/images/Logo.png">
     <meta property="og:url" content="https://sbmcontech.co.za/contact.html">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="SBM ConTech Industries | Contact & Quotes">
-    <meta name="twitter:description" content="Contact SBM ConTech Industries for smart home solutions, automation, security systems, websites, apps, and premium digital services in South Africa.">
+    <meta name="twitter:description" content="Contact SBM ConTech Industries for smart home solutions, automation, security systems, AI business tools, websites, apps, and premium digital services in South Africa.">
     <meta name="twitter:image" content="https://sbmcontech.co.za/images/Logo.png">
     <link rel="canonical" href="https://sbmcontech.co.za/contact.html">
     <title>SBM ConTech Industries | Contact</title>
@@ -204,7 +204,7 @@
         </div>
         <div class="contact-mini-card">
             <span>Business Focus</span>
-            <p>Smart homes, software, automation, security, and digital systems</p>
+            <p>Smart homes, software, automation, security, AI systems, and digital business tools</p>
         </div>
     </div>
 
@@ -215,8 +215,8 @@
             <p><strong>Email:</strong> sbmcontechindustries@gmail.com</p>
             <p><strong>Business:</strong> SBM ConTech Industries</p>
             <p><strong>Instagram:</strong> <a href="https://www.instagram.com/sbmcontechindustries/" target="_blank" rel="noopener noreferrer">@sbmcontechindustries</a></p>
-            <p><strong>Focus:</strong> Smart homes, automation, security, websites, apps, and energy management</p>
-            <p><strong>Experience:</strong> Premium intelligent living built for modern homes and businesses</p>
+            <p><strong>Focus:</strong> Smart homes, automation, security, websites, apps, AI systems, dashboards, and digital growth</p>
+            <p><strong>Experience:</strong> Premium intelligent solutions built for modern homes and businesses</p>
         </div>
 
         <div class="content-card contact-form-card">
@@ -227,6 +227,12 @@
                     <input type="text" name="name" placeholder="Your Full Name" required>
                     <input type="email" name="email" placeholder="Your Email Address" required>
                 </div>
+
+                <div class="form-row">
+                    <input type="text" name="business_name" placeholder="Business Name" required>
+                    <input type="text" name="industry" placeholder="Industry" required>
+                </div>
+
                 <div class="form-row">
                     <input type="text" name="subject" placeholder="Subject" required>
                     <select name="service" required>
@@ -235,9 +241,55 @@
                         <option>Website Development</option>
                         <option>App Development</option>
                         <option>Automation / Security</option>
+                        <option>AI Business System</option>
+                        <option>Dashboard Development</option>
                     </select>
                 </div>
-                <textarea name="message" rows="6" placeholder="Your Message" required></textarea>
+
+                <div class="form-row">
+                    <select name="preferred_contact_method" required>
+                        <option value="">Preferred Contact Method</option>
+                        <option>Email</option>
+                        <option>Phone Call</option>
+                        <option>WhatsApp</option>
+                        <option>Instagram DM</option>
+                    </select>
+
+                    <select name="budget_range" required>
+                        <option value="">Budget Range</option>
+                        <option>Under R3,000</option>
+                        <option>R3,000 - R7,500</option>
+                        <option>R7,500 - R18,000</option>
+                        <option>R18,000 - R50,000</option>
+                        <option>R50,000+</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <select name="needs_ai_agent" required>
+                        <option value="">Needs AI agent?</option>
+                        <option>Yes</option>
+                        <option>No</option>
+                    </select>
+
+                    <select name="needs_dashboard" required>
+                        <option value="">Needs dashboard?</option>
+                        <option>Yes</option>
+                        <option>No</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <select name="needs_booking_system" required>
+                        <option value="">Needs booking system?</option>
+                        <option>Yes</option>
+                        <option>No</option>
+                    </select>
+
+                    <input type="text" name="phone" placeholder="Phone Number / WhatsApp">
+                </div>
+
+                <textarea name="message" rows="6" placeholder="Tell us about your project, goals, or business needs" required></textarea>
 
                 <input type="hidden" name="_subject" value="New SBM ConTech Industries Contact Form Submission">
                 <input type="hidden" name="_next" value="thank-you.html">
@@ -304,10 +356,7 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" defer></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js" defer></script>
 
-
 <script type="text/babel" src="react.js" defer></script>
-
-
 <script src="script.js" defer></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {

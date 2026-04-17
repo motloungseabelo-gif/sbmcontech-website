@@ -10,22 +10,21 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <meta name="description" content="Use the SBM Smart App interface to simulate control over lights, security, smart doorbell actions, and the SBM Business Console demo.">
-    <meta name="theme-color" content="#0b1830">
-    <meta property="og:title" content="SBM Smart App | SBM ConTech Industries">
-    <meta property="og:description" content="Use the SBM Smart App demo interface to simulate smart home control and preview the SBM Business Console for leads, quotes, AI conversations, and client management.">
+    <meta name="description" content="Experience the SBM Smart Living system and preview a realistic control dashboard for security, lighting, climate, gate access, energy, water, rooms, and business operations.">
+    <meta property="og:title" content="SBM Smart Living System | SBM ConTech Industries">
+    <meta property="og:description" content="Preview a realistic SBM smart home and business control dashboard with scenes, devices, access control, energy, room status, and a premium control experience.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://sbmcontech.co.za/images/Logo.png">
     <meta property="og:url" content="https://sbmcontech.co.za/app.html">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="SBM Smart App | SBM ConTech Industries">
-    <meta name="twitter:description" content="Use the SBM Smart App demo interface to simulate smart home control and preview the SBM Business Console demo experience.">
+    <meta name="twitter:title" content="SBM Smart Living System | SBM ConTech Industries">
+    <meta name="twitter:description" content="Explore the SBM Smart Living system demo and see how one dashboard can control your home, security, climate, and connected business operations.">
     <meta name="twitter:image" content="https://sbmcontech.co.za/images/Logo.png">
     <link rel="canonical" href="https://sbmcontech.co.za/app.html">
-    <title>SBM Smart App</title>
+    <title>SBM Smart Living System | SBM ConTech Industries</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="app-page-body">
 
 <div class="scroll-progress" id="scrollProgress"></div>
 <div class="announcement-bar">
@@ -38,8 +37,8 @@
 <div class="splash-screen" id="splashScreen" aria-hidden="true">
     <div class="splash-content">
         <img loading="eager" decoding="async" src="images/Logo.png" alt="SBM ConTech Industries Logo" class="splash-logo">
-        <h2>SBM Smart App</h2>
-        <p>Control Your Smart Home Devices</p>
+        <h2>SBM Smart Living</h2>
+        <p>Your connected control system</p>
     </div>
 </div>
 
@@ -49,8 +48,8 @@
             <div class="brand">
                 <img loading="eager" decoding="async" src="images/Logo.png" alt="SBM ConTech Industries Logo" class="brand-logo">
                 <div class="brand-text">
-                    <h1>SBM Smart App</h1>
-                    <p>Control Your Smart Home Devices</p>
+                    <h1>SBM Smart Living</h1>
+                    <p>Control Your Entire Property</p>
                 </div>
             </div>
         </a>
@@ -64,53 +63,188 @@
             <a href="services.html">Services</a>
             <a href="about.html">About</a>
             <a href="vision.html">Vision</a>
+            <a href="construction.html">Construction</a>
             <a href="contact.html">Contact</a>
             <a href="app.html" class="nav-btn active-btn">Smart App</a>
         </nav>
     </div>
 </header>
 
-<section class="page-banner">
+<section class="page-banner app-page-banner">
     <div class="wrapper">
-        <h2>SBM Smart Living</h2>
-        <p>Control your smart home devices with elegance, clarity, and confidence.</p>
+        <span class="tag">Smart Home • Access • Energy • Comfort • Security</span>
+        <h2>SBM Smart Living System</h2>
+        <p>One premium control experience for your house, your security, your climate, your utilities, and your future digital lifestyle.</p>
     </div>
 </section>
 
 <section class="section">
-    <div class="wrapper app-dashboard-bar">
-        <div class="live-indicator">
-            <span class="live-dot"></span>
-            <span>Demo interface active</span>
+    <div class="wrapper app-system-shell reveal-on-load">
+        <div class="app-system-topbar">
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                <span>System online</span>
+            </div>
+            <div class="app-topbar-actions">
+                <span class="status-pill active" id="homeModeBadge">Home Mode Active</span>
+                <span class="status-pill active" id="systemHealthBadge">92% System Health</span>
+            </div>
         </div>
-        <div class="dashboard-meta">Interactive front-end preview of your future smart control experience.</div>
+
+        <div class="app-hero-panel">
+            <div>
+                <span class="info-chip">Connected Property</span>
+                <h3>Control everything from one luxury dashboard</h3>
+                <p>The SBM Smart Living system is designed to bring lighting, security, climate control, gate access, energy monitoring, water reserve alerts, and room-level automation into one clean mobile experience.</p>
+                <div class="hero-buttons app-hero-buttons">
+                    <button type="button" onclick="activateMode('home')">Home Mode</button>
+                    <button type="button" onclick="activateMode('night')">Night Mode</button>
+                    <button type="button" onclick="activateMode('away')">Away Mode</button>
+                </div>
+            </div>
+            <div class="app-hero-stats">
+                <div class="metric-chip">
+                    <strong id="activeDevicesCount">8 Devices</strong>
+                    <span>Currently active</span>
+                </div>
+                <div class="metric-chip">
+                    <strong id="monthlyEnergyValue">412 kWh</strong>
+                    <span>Monthly tracked energy</span>
+                </div>
+                <div class="metric-chip">
+                    <strong id="waterReserveValue">78%</strong>
+                    <span>Water reserve level</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-room-strip">
+            <button type="button" class="room-chip active" data-room="Lounge" onclick="setRoom('Lounge', this)">Lounge</button>
+            <button type="button" class="room-chip" data-room="Kitchen" onclick="setRoom('Kitchen', this)">Kitchen</button>
+            <button type="button" class="room-chip" data-room="Main Bedroom" onclick="setRoom('Main Bedroom', this)">Main Bedroom</button>
+            <button type="button" class="room-chip" data-room="Patio" onclick="setRoom('Patio', this)">Patio</button>
+            <button type="button" class="room-chip" data-room="Garage" onclick="setRoom('Garage', this)">Garage</button>
+        </div>
+
+        <div class="wrapper app-grid app-grid-wide" style="padding-left:0; padding-right:0;">
+            <div class="app-card control-card control-card-large">
+                <span class="info-chip">Master Overview</span>
+                <h3>🏠 Property Status</h3>
+                <p id="selectedRoomStatus">Viewing: Lounge</p>
+                <div class="device-list compact-device-list">
+                    <div class="device-row"><span>Current mode</span><strong id="modeStatus">Home</strong></div>
+                    <div class="device-row"><span>Front gate</span><strong id="gateStatus">Closed</strong></div>
+                    <div class="device-row"><span>Alarm system</span><strong id="securityStatus">Armed</strong></div>
+                    <div class="device-row"><span>Climate target</span><strong id="climateStatus">22°C Cooling</strong></div>
+                    <div class="device-row"><span>Curtains</span><strong id="curtainStatus">Open</strong></div>
+                </div>
+            </div>
+
+            <div class="app-card control-card">
+                <span class="info-chip">Lighting</span>
+                <h3>💡 Smart Lights</h3>
+                <p>Create mood and control room brightness instantly.</p>
+                <div class="app-action-row">
+                    <button type="button" onclick="toggleLight()">Toggle Lights</button>
+                    <button type="button" onclick="setScene('Movie')">Movie Scene</button>
+                </div>
+                <p id="lightStatus">Lights are ON</p>
+                <span class="status-pill active" id="lightBadge">Warm evening scene</span>
+            </div>
+
+            <div class="app-card control-card">
+                <span class="info-chip">Security</span>
+                <h3>🔐 Smart Security</h3>
+                <p>Manage alarm status, visitor flow, and perimeter protection.</p>
+                <div class="app-action-row">
+                    <button type="button" onclick="toggleSecurity()">Arm / Disarm</button>
+                    <button type="button" onclick="simulateDoorbell()">Doorbell Alert</button>
+                </div>
+                <p id="securityDetail">Perimeter secure. All access points normal.</p>
+                <span class="status-pill active" id="securityBadge">Perimeter secure</span>
+            </div>
+
+            <div class="app-card control-card">
+                <span class="info-chip">Access</span>
+                <h3>🚗 Gate & Garage</h3>
+                <p>Control how vehicles and visitors enter your property.</p>
+                <div class="app-action-row">
+                    <button type="button" onclick="toggleGate()">Gate</button>
+                    <button type="button" onclick="toggleGarage()">Garage</button>
+                </div>
+                <div class="device-list compact-device-list">
+                    <div class="device-row"><span>Gate</span><strong id="gateDetail">Closed</strong></div>
+                    <div class="device-row"><span>Garage</span><strong id="garageStatus">Closed</strong></div>
+                </div>
+            </div>
+
+            <div class="app-card control-card">
+                <span class="info-chip">Comfort</span>
+                <h3>🌡️ Climate & Curtains</h3>
+                <p>Adjust comfort automatically for every room in the house.</p>
+                <div class="app-action-row">
+                    <button type="button" onclick="adjustClimate(-1)">-1°C</button>
+                    <button type="button" onclick="adjustClimate(1)">+1°C</button>
+                    <button type="button" onclick="toggleCurtains()">Curtains</button>
+                </div>
+                <p id="climateDetail">Target temperature: 22°C</p>
+                <span class="status-pill active" id="climateBadge">Comfort optimized</span>
+            </div>
+
+            <div class="app-card control-card">
+                <span class="info-chip">Utilities</span>
+                <h3>⚡ Energy & Water</h3>
+                <p>Monitor usage and keep your home efficient and prepared.</p>
+                <div class="app-action-row">
+                    <button type="button" onclick="refreshUtilities()">Refresh Usage</button>
+                    <button type="button" onclick="toggleSolarMode()">Solar Priority</button>
+                </div>
+                <div class="device-list compact-device-list">
+                    <div class="device-row"><span>Current load</span><strong id="energyUsage">4.8 kWh</strong></div>
+                    <div class="device-row"><span>Water reserve</span><strong id="waterReserve">78%</strong></div>
+                    <div class="device-row"><span>Power strategy</span><strong id="solarModeStatus">Solar Priority Off</strong></div>
+                </div>
+            </div>
+
+            <div class="app-card control-card">
+                <span class="info-chip">Scenes</span>
+                <h3>✨ One-Tap Scenes</h3>
+                <p>Apply coordinated settings instantly across the property.</p>
+                <div class="scene-grid">
+                    <button type="button" class="scene-btn" onclick="setScene('Morning')">Morning</button>
+                    <button type="button" class="scene-btn" onclick="setScene('Work')">Work</button>
+                    <button type="button" class="scene-btn" onclick="setScene('Movie')">Movie</button>
+                    <button type="button" class="scene-btn" onclick="setScene('Outdoor')">Outdoor</button>
+                </div>
+                <p id="sceneStatus">Current scene: Lounge Welcome</p>
+            </div>
+        </div>
     </div>
+</section>
 
-    <div class="wrapper app-grid">
-        <div class="app-card">
-            <span class="info-chip">Lighting Module</span>
-            <h3>💡 Smart Lights</h3>
-            <p>Turn your lighting on or off instantly using your smart control interface.</p>
-            <button onclick="toggleLight()">Toggle Light</button>
-            <p id="lightStatus">Light is OFF</p>
-            <span class="status-pill" id="lightBadge">Lights Offline</span>
+<section class="section alt-section">
+    <div class="wrapper">
+        <div class="section-heading">
+            <span class="tag">Room Intelligence</span>
+            <h2>Room-level monitoring that feels real</h2>
+            <p>SBM is not just turning switches on and off. It is building a system that can understand space usage, device status, comfort, and security in each room.</p>
         </div>
-
-        <div class="app-card">
-            <span class="info-chip">Security Module</span>
-            <h3>🔐 Smart Security</h3>
-            <p>Arm or disarm your home security system with one clean action.</p>
-            <button onclick="toggleSecurity()">Arm / Disarm</button>
-            <p id="securityStatus">Security is DISARMED</p>
-            <span class="status-pill" id="securityBadge">Protection Standby</span>
-        </div>
-
-        <div class="app-card">
-            <span class="info-chip">Visitor Module</span>
-            <h3>🚪 Smart Doorbell</h3>
-            <p>Simulate a visitor alert and test your connected smart-home experience.</p>
-            <button onclick="doorbell()">Simulate Ring</button>
-            <p>Receive instant visitor notifications in a premium control environment.</p>
+        <div class="services-grid">
+            <div class="service-card">
+                <span class="card-label">Lounge</span>
+                <h3>Ambient Control</h3>
+                <p>Lighting scenes, media mode, curtains, and comfort settings for premium everyday living.</p>
+            </div>
+            <div class="service-card">
+                <span class="card-label">Kitchen</span>
+                <h3>Smart Utility Zone</h3>
+                <p>Energy-aware appliances, sensor alerts, and occupancy-based automation.</p>
+            </div>
+            <div class="service-card">
+                <span class="card-label">Perimeter</span>
+                <h3>Access & Security</h3>
+                <p>Gate automation, garage control, cameras, and fast visitor response from one mobile dashboard.</p>
+            </div>
         </div>
     </div>
 </section>
@@ -120,7 +254,7 @@
         <div class="section-heading">
             <span class="tag">SBM Business Console Demo</span>
             <h2>Business intelligence for modern growth</h2>
-            <p>Preview how SBM can help businesses manage leads, quotations, client communication, and AI-assisted support from one premium console.</p>
+            <p>SBM can also build premium business dashboards that manage leads, quotations, messages, sales operations, and AI-assisted support.</p>
         </div>
 
         <div class="wrapper app-dashboard-bar" style="padding-left:0; padding-right:0;">
@@ -135,50 +269,45 @@
             <div class="app-card">
                 <span class="info-chip">Today’s Leads</span>
                 <h3>📥 12 New Leads</h3>
-                <p>Track fresh enquiries coming in from your website, landing pages, and contact forms in real time.</p>
+                <p>Track fresh enquiries from your website, forms, landing pages, and social media.</p>
                 <span class="status-pill active">+4 high-intent today</span>
             </div>
-
             <div class="app-card">
                 <span class="info-chip">Pending Quotes</span>
                 <h3>🧾 5 Quotes Awaiting Approval</h3>
-                <p>Monitor quotations still in progress so you can respond faster and close more deals.</p>
+                <p>Monitor quotations still in progress and keep your sales pipeline moving.</p>
                 <span class="status-pill active">2 urgent follow-ups</span>
             </div>
-
             <div class="app-card">
                 <span class="info-chip">AI Conversations</span>
                 <h3>🤖 28 Active Conversations</h3>
-                <p>See how your AI assistant is engaging visitors, answering questions, and qualifying prospects automatically.</p>
+                <p>See how your AI assistant is engaging visitors and qualifying prospects automatically.</p>
                 <span class="status-pill active">AI response rate high</span>
             </div>
-
-            <div class="app-card">
-                <span class="info-chip">Conversion Score</span>
-                <h3>📈 74% Conversion Health</h3>
-                <p>Measure how well your enquiries are moving toward quote requests, bookings, and real sales opportunities.</p>
-                <span class="status-pill active">Above weekly average</span>
-            </div>
-
             <div class="app-card">
                 <span class="info-chip">Client Messages</span>
                 <h3>💬 9 Unread Client Messages</h3>
-                <p>Keep client communication organized and visible so no important business message is missed.</p>
+                <p>Keep business communication visible so no important message is missed.</p>
                 <span class="status-pill active">3 need response now</span>
             </div>
-
+            <div class="app-card">
+                <span class="info-chip">Conversion Score</span>
+                <h3>📈 74% Conversion Health</h3>
+                <p>Measure how enquiries are moving toward quotations, bookings, and real sales.</p>
+                <span class="status-pill active">Above weekly average</span>
+            </div>
             <div class="app-card">
                 <span class="info-chip">Admin View</span>
-                <h3>🖥️ Unified Business Dashboard</h3>
+                <h3>🖥️ Unified Dashboard</h3>
                 <p>Bring leads, AI activity, quotations, and customer communication into one premium business control space.</p>
-                <button onclick="goHome()">Request This System</button>
-                <p>Built for businesses that want a real AI-powered backend, not just a simple website.</p>
+                <button type="button" onclick="goQuotePage()">Request This System</button>
+                <p>Built for businesses that want a real digital operating layer, not just a simple website.</p>
             </div>
         </div>
     </div>
 
     <div class="center-btn top-space wrapper">
-        <button onclick="goHome()">⬅ Back to Website</button>
+        <a href="contact.html" class="secondary-btn">Request the full SBM system</a>
     </div>
 </section>
 
@@ -205,6 +334,7 @@
                     <li><a href="services.html">Services</a></li>
                     <li><a href="about.html">About</a></li>
                     <li><a href="vision.html">Vision</a></li>
+                    <li><a href="construction.html">Construction</a></li>
                     <li><a href="contact.html">Contact</a></li>
                     <li><a href="app.html">Smart App</a></li>
                 </ul>
@@ -223,12 +353,6 @@
 </footer>
 
 <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" defer></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" defer></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js" defer></script>
-
 <script src="script.js" defer></script>
-<script type="text/babel" src="react.js" defer></script>
-
 </body>
 </html>

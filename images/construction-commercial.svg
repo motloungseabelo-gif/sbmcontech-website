@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+<title>SBM Smart Commercial Building Concept</title><desc>Illustration of a smart commercial building and connected business property.</desc>
+<defs>
+  <linearGradient id="sky3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#081220"/><stop offset="100%" stop-color="#1c3d67"/></linearGradient>
+  <linearGradient id="glass3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b6defe"/><stop offset="100%" stop-color="#5f8fd0"/></linearGradient>
+  <linearGradient id="ground3" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#1b2532"/><stop offset="100%" stop-color="#38475d"/></linearGradient>
+</defs>
+<rect width="1600" height="900" fill="url(#sky3)"/>
+<rect y="700" width="1600" height="200" fill="url(#ground3)"/>
+<rect x="250" y="260" width="220" height="440" rx="12" fill="#f5f0e7"/>
+<rect x="510" y="180" width="300" height="520" rx="14" fill="#f8f4ec"/>
+<rect x="860" y="120" width="360" height="580" rx="16" fill="#eff3f9"/>
+<rect x="1260" y="300" width="150" height="400" rx="12" fill="#f2ede4"/>
+<g fill="url(#glass3)" opacity="0.9">
+  <rect x="285" y="320" width="150" height="320" rx="6"/>
+  <rect x="555" y="240" width="210" height="390" rx="6"/>
+  <rect x="915" y="175" width="250" height="460" rx="6"/>
+  <rect x="1290" y="340" width="90" height="280" rx="6"/>
+</g>
+<rect x="1050" y="520" width="120" height="22" rx="10" fill="#00d4ff" opacity="0.95"/>
+<rect x="1030" y="560" width="160" height="22" rx="10" fill="#4de4c2" opacity="0.9"/>
+<circle cx="1110" cy="345" r="16" fill="#d4a164"/>
+<path d="M170 700h1280" stroke="#8898af" stroke-width="4" opacity="0.5"/>
+<text x="110" y="130" font-size="54" font-family="Poppins, Arial, sans-serif" fill="#ffffff" font-weight="700">SBM Smart Building Vision</text>
+<text x="112" y="185" font-size="28" font-family="Poppins, Arial, sans-serif" fill="#dce8ff">Future-ready commercial property with monitoring, dashboards, access control, and digital support</text>
+</svg>

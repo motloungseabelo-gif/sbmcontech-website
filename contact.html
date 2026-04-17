@@ -10,9 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <meta name="description" content="Contact SBM ConTech Industries for smart home solutions, automation, security systems, AI business tools, websites, dashboards, and premium digital services.">
-    <meta name="theme-color" content="#0b1830">
-    <meta property="og:title" content="SBM ConTech Industries | Contact & Quotes">
+    <meta name="description" content="Contact SBM ConTech Industries for smart home solutions, automation, security systems, AI business tools, websites, dashboards, and premium digital services.">    <meta property="og:title" content="SBM ConTech Industries | Contact & Quotes">
     <meta property="og:description" content="Contact SBM ConTech Industries for smart home solutions, automation, security systems, AI business tools, websites, apps, and premium digital services in South Africa.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://sbmcontech.co.za/images/Logo.png">
@@ -24,121 +22,6 @@
     <link rel="canonical" href="https://sbmcontech.co.za/contact.html">
     <title>SBM ConTech Industries | Contact</title>
     <link rel="stylesheet" href="style.css">
-
-    <style>
-        .form-status {
-            margin-top: 14px;
-            font-size: 0.95rem;
-            color: #dce8ff;
-            min-height: 22px;
-        }
-
-        .contact-form button.loading {
-            opacity: 0.85;
-            pointer-events: none;
-        }
-
-        .success-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(4, 10, 24, 0.82);
-            backdrop-filter: blur(12px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.35s ease;
-            padding: 20px;
-        }
-
-        .success-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .success-card {
-            width: 100%;
-            max-width: 520px;
-            background: linear-gradient(135deg, rgba(11,24,48,0.95), rgba(26,42,80,0.95));
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 24px;
-            padding: 38px 28px;
-            text-align: center;
-            color: #fff;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.35);
-            transform: translateY(20px) scale(0.96);
-            transition: all 0.4s ease;
-        }
-
-        .success-overlay.show .success-card {
-            transform: translateY(0) scale(1);
-        }
-
-        .success-check {
-            width: 84px;
-            height: 84px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #00d4ff, #4de4c2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2rem;
-            color: #07111f;
-            font-weight: bold;
-            box-shadow: 0 12px 35px rgba(0, 212, 255, 0.28);
-            animation: popIn 0.55s ease;
-        }
-
-        .success-card h3 {
-            margin: 0 0 10px;
-            font-size: 2rem;
-        }
-
-        .success-card p {
-            margin: 0;
-            color: rgba(255,255,255,0.82);
-            line-height: 1.6;
-        }
-
-        .success-loader {
-            width: 100%;
-            max-width: 220px;
-            height: 6px;
-            margin: 24px auto 0;
-            border-radius: 999px;
-            background: rgba(255,255,255,0.12);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .success-loader span {
-            display: block;
-            width: 0%;
-            height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, #00d4ff, #4de4c2);
-            animation: loadBar 2.3s linear forwards;
-        }
-
-        @keyframes popIn {
-            0% {
-                transform: scale(0.6);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        @keyframes loadBar {
-            from { width: 0%; }
-            to { width: 100%; }
-        }
-    </style>
 </head>
 <body>
 
@@ -179,8 +62,9 @@
             <a href="services.html">Services</a>
             <a href="about.html">About</a>
             <a href="vision.html">Vision</a>
+            <a href="construction.html">Construction</a>
             <a href="contact.html" class="active">Contact</a>
-            <a href="app.html" class="nav-btn">Open Smart App</a>
+            <a href="app.html" class="nav-btn">Smart App</a>
         </nav>
     </div>
 </header>
@@ -325,6 +209,7 @@
                     <li><a href="services.html">Services</a></li>
                     <li><a href="about.html">About</a></li>
                     <li><a href="vision.html">Vision</a></li>
+                    <li><a href="construction.html">Construction</a></li>
                     <li><a href="contact.html">Contact</a></li>
                     <li><a href="app.html">Smart App</a></li>
                 </ul>
@@ -352,62 +237,7 @@
 </div>
 
 <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" defer></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" defer></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js" defer></script>
 
-<script type="text/babel" src="react.js" defer></script>
 <script src="script.js" defer></script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("contactForm");
-    const submitBtn = document.getElementById("submitBtn");
-    const formStatus = document.getElementById("formStatus");
-    const successOverlay = document.getElementById("successOverlay");
-
-    if (!form) return;
-
-    form.addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        submitBtn.classList.add("loading");
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Sending...";
-        formStatus.textContent = "";
-
-        try {
-            const formData = new FormData(form);
-
-            const response = await fetch(form.action, {
-                method: "POST",
-                body: formData,
-                headers: {
-                    "Accept": "application/json"
-                }
-            });
-
-            if (response.ok) {
-                form.reset();
-                successOverlay.classList.add("show");
-                successOverlay.setAttribute("aria-hidden", "false");
-
-                setTimeout(() => {
-                    window.location.href = "thank-you.html";
-                }, 2200);
-            } else {
-                formStatus.textContent = "Something went wrong. Please try again.";
-                submitBtn.classList.remove("loading");
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Send Message";
-            }
-        } catch (error) {
-            formStatus.textContent = "Network error. Please check your connection and try again.";
-            submitBtn.classList.remove("loading");
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Send Message";
-        }
-    });
-});
-</script>
 </body>
 </html>

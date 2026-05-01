@@ -427,3 +427,22 @@
 
     document.addEventListener("DOMContentLoaded", init);
 })();
+
+
+// === SBM Enhanced utility layer ===
+document.addEventListener("DOMContentLoaded", () => {
+  const current = location.pathname.split("/").pop() || "index.html";
+  document.querySelectorAll(".navbar a").forEach(link => {
+    const href = link.getAttribute("href");
+    if (href === current) link.setAttribute("aria-current", "page");
+  });
+  if (!document.querySelector(".skip-link")) {
+    const skip = document.createElement("a");
+    skip.href = "#main";
+    skip.className = "skip-link";
+    skip.textContent = "Skip to content";
+    document.body.prepend(skip);
+  }
+  const firstSection = document.querySelector("main, .hero-section, .page-banner, .section");
+  if (firstSection && !firstSection.id) firstSection.id = "main";
+});

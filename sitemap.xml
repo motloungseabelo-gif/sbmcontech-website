@@ -1,40 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-  <url>
-    <loc>https://sbmcontech.co.za/</loc>
-  </url>
-
-  <url>
-    <loc>https://sbmcontech.co.za/index.html</loc>
-  </url>
-
-  <url>
-    <loc>https://sbmcontech.co.za/services.html</loc>
-  </url>
-
-  <url>
-    <loc>https://sbmcontech.co.za/about.html</loc>
-  </url>
-
-  <url>
-    <loc>https://sbmcontech.co.za/vision.html</loc>
-  </url>
-
-  <url>
-    <loc>https://sbmcontech.co.za/construction.html</loc>
-  </url>
-
-  <url>
-    <loc>https://sbmcontech.co.za/atelier.html</loc>
-  </url>
-
-  <url>
-    <loc>https://sbmcontech.co.za/contact.html</loc>
-  </url>
-
-  <url>
-    <loc>https://sbmcontech.co.za/app.html</loc>
-  </url>
-
+  <url><loc>https://sbmcontech.co.za/</loc></url>
+  <url><loc>https://sbmcontech.co.za/index.html</loc></url>
+  <url><loc>https://sbmcontech.co.za/services.html</loc></url>
+  <url><loc>https://sbmcontech.co.za/about.html</loc></url>
+  <url><loc>https://sbmcontech.co.za/vision.html</loc></url>
+  <url><loc>https://sbmcontech.co.za/contact.html</loc></url>
+  <url><loc>https://sbmcontech.co.za/app.html</loc></url>
 </urlset>

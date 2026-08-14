@@ -1,0 +1,82 @@
+/* =========================================================
+   SBM Mobile Performance + 3-D Scroll Simulator v2
+   Keeps existing structure; overrides only motion/perf rules.
+   ========================================================= */
+:root{--scroll-velocity:0deg;--scroll-page:0;--pointer-x:0px;--pointer-y:0px}
+html{overscroll-behavior-y:none}
+img{height:auto}
+.site-header{transform:translateZ(0)}
+.work-card,.case-preview,.leader-card{will-change:auto}
+.depth-active,.depth-active .portrait-background,.depth-active .portrait-foreground{will-change:transform}
+.scroll-3d .system-visual,.scroll-3d .arch-map,.scroll-3d .case-preview,.scroll-3d .leader-photo{transform-style:preserve-3d;backface-visibility:hidden}
+.scroll-3d .case-preview{transform:perspective(1200px) translate3d(var(--depth-x),var(--depth-y),0) rotateX(calc(var(--depth-r) + var(--scroll-velocity))) rotateY(var(--tilt-y))}
+.scroll-3d .arch-map{transform:perspective(1200px) translate3d(var(--depth-x),var(--depth-y),0) rotateX(calc(var(--tilt-x) + var(--depth-r))) rotateY(var(--tilt-y))}
+.scroll-3d .system-visual{transform:perspective(1100px) translate3d(var(--depth-x),var(--depth-y),0) rotateX(calc(var(--tilt-x) + var(--depth-r))) rotateY(var(--tilt-y))}
+.scroll-3d .vision-band:before{transform:translate3d(var(--depth-x-inv),var(--depth-y-inv),0)}
+.motion-lite .system-visual:after{display:none}
+.motion-lite .net-path{animation-duration:18s}
+.motion-lite .reveal{filter:none!important}
+
+@media(max-width:860px){
+  .site-header{background:rgba(5,10,18,.985);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .navbar{max-height:calc(100dvh - 96px);overflow-y:auto;overscroll-behavior:contain}
+  .motion-ready main>section:not(.ticker):not(.section-active)>.motion-shell,
+  .motion-ready main>section:not(.ticker):not(.section-active)>.shell{filter:none;opacity:.58;clip-path:none;transform:translate3d(0,12px,0)}
+  .motion-ready .reveal{filter:none;clip-path:none;transform:translate3d(0,16px,0);transition:opacity 520ms var(--ease-cine),transform 620ms var(--ease-cine)}
+  .scroll-3d .system-visual,
+  .scroll-3d .arch-map,
+  .scroll-3d .case-preview,
+  .scroll-3d .leader-photo{
+    transform:perspective(900px) translate3d(0,var(--depth-y),0) rotateX(calc(var(--depth-r) + var(--scroll-velocity)))!important;
+    transition:transform 90ms linear!important;
+  }
+  .scroll-3d .work-card{transform:none!important}
+  .scroll-3d .work-screen{transform:translate3d(0,var(--depth-y-soft),0)!important}
+  .scroll-3d .leader-photo .portrait-background{transform:translate3d(0,var(--depth-y-inv-soft),0) scale(1.14)!important;filter:grayscale(1) contrast(1.05) brightness(.52)!important}
+  .scroll-3d .leader-photo .portrait-foreground{transform:translate3d(0,var(--depth-y-soft),0) scale(1.025)!important;filter:grayscale(.72) contrast(1.04) brightness(.98)!important}
+  .hero:before,.page-hero:before{transform:translate3d(0,var(--depth-y-inv-subtle),0) scale(1.04)}
+  .hero:after,.page-hero:after{transform:translate3d(0,var(--depth-y-subtle),0)}
+  .division-card:hover,.leader-card:hover,.work-card:hover{transform:none;box-shadow:none}
+  .system-visual:after{display:none}
+}
+
+@media(max-width:600px){
+  .shell{width:min(100% - 24px,1240px)}
+  .hero-layout{padding-top:58px}
+  .system-visual{max-height:78vw}
+  .node{width:min(96px,28vw);padding:8px}
+  .node b{font-size:9px}.node span{font-size:7px}
+  .hub{width:min(118px,34vw);height:86px;padding:14px}.hub strong{font-size:21px}
+  .section{padding:58px 0}
+  .division-card{padding:22px;min-height:360px}
+  .work-screen,.work-card:not(.work-large) .work-screen{height:270px}
+  .scope-step{padding:22px 16px}
+  .ticker-track{animation-duration:48s}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .scroll-3d .system-visual,.scroll-3d .arch-map,.scroll-3d .case-preview,.scroll-3d .leader-photo,.scroll-3d .work-screen,
+  .scroll-3d .leader-photo .portrait-background,.scroll-3d .leader-photo .portrait-foreground{transform:none!important;will-change:auto!important}
+}
+
+
+/* =========================================================
+   SBM Corporate Park + Compact Load Screen v3
+   Additive visual layer: no existing component structure removed.
+   ========================================================= */
+.sbm-loader-screen{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;background:rgba(242,246,252,.94);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);pointer-events:none;animation:sbmLoaderScreen 1.15s cubic-bezier(.77,0,.18,1) .25s forwards}
+.sbm-loader-card{width:150px;padding:18px 18px 15px;border:1px solid rgba(23,61,145,.16);background:rgba(255,255,255,.94);box-shadow:0 18px 55px rgba(5,22,48,.11);text-align:center;transform:translateZ(0)}
+.sbm-loader-mark{font:700 24px/1 var(--display);letter-spacing:.16em;color:#102d67;margin-left:.16em}.sbm-loader-card small{display:block;margin-top:9px;font:700 6px/1 var(--display);letter-spacing:.2em;color:#80614c}.sbm-loader-line{height:2px;margin-top:13px;background:#dce5f2;overflow:hidden}.sbm-loader-line i{display:block;width:40%;height:100%;background:linear-gradient(90deg,#b88962,#244b9c);animation:sbmLoaderLine .8s ease-in-out infinite}
+@keyframes sbmLoaderLine{0%{transform:translateX(-120%)}100%{transform:translateX(350%)}}@keyframes sbmLoaderScreen{0%{opacity:1;visibility:visible}72%{opacity:1}100%{opacity:0;visibility:hidden}}
+
+.home-hero{position:relative}.home-hero>.hero-layout{position:relative;z-index:3}.sbm-corporate-park{--park-blue:#bcd8ff;--park-glass:#e7f2ff;position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;perspective:1100px;transform-style:preserve-3d;opacity:.78;transform:translate3d(var(--depth-x,0),var(--depth-y-soft,0),0)}
+.sbm-corporate-park:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(3,16,32,.98) 0%,rgba(4,16,33,.92) 36%,rgba(7,22,44,.58) 59%,rgba(231,242,255,.20) 100%);z-index:8}.sbm-corporate-park:after{content:"SBM FUTURE CAMPUS / GAUTENG";position:absolute;right:3.5%;bottom:4%;z-index:9;color:rgba(226,238,255,.45);font:600 7px var(--display);letter-spacing:.22em}
+.park-horizon{position:absolute;inset:0;background:radial-gradient(circle at 82% 23%,rgba(255,255,255,.94) 0 5%,rgba(189,218,255,.55) 6%,transparent 24%),linear-gradient(180deg,#dcecff 0%,#bdd5ef 38%,#8fa8c1 64%,#547086 100%);transform:translateZ(-80px) scale(1.13)}
+.park-campus{position:absolute;right:-4%;bottom:-36%;width:72%;height:94%;transform-style:preserve-3d;transform:rotateX(61deg) rotateZ(-12deg) translate3d(var(--depth-x-inv,0),var(--depth-y-inv-soft,0),0);background:linear-gradient(135deg,#d6e4d4,#b9ceb9 52%,#d7e3d0);border:1px solid rgba(255,255,255,.42);box-shadow:0 -50px 110px rgba(29,63,92,.18)}
+.park-road{position:absolute;display:block;background:linear-gradient(90deg,#617180,#758896 48%,#5e6f7d);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}.main-road{width:112%;height:10%;left:-6%;top:49%}.cross-road{height:112%;width:9%;left:49%;top:-6%}.park-road:after{content:"";position:absolute;inset:48% 0 auto;height:1px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.8) 0 18px,transparent 18px 34px)}.cross-road:after{inset:0 auto 0 49%;width:1px;height:auto;background:repeating-linear-gradient(180deg,rgba(255,255,255,.75) 0 18px,transparent 18px 34px)}
+.park-building{position:absolute;display:block;border:1px solid rgba(61,94,128,.34);background:linear-gradient(145deg,rgba(244,249,255,.98),rgba(187,213,235,.94));box-shadow:18px 22px 28px rgba(23,50,74,.18);transform:translateZ(46px);overflow:hidden}.park-building:before{content:"";position:absolute;inset:10%;background:repeating-linear-gradient(90deg,rgba(37,78,124,.33) 0 4px,transparent 4px 11px),repeating-linear-gradient(0deg,rgba(37,78,124,.13) 0 3px,transparent 3px 13px)}.park-building:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,rgba(255,255,255,.88),transparent 38%,rgba(63,116,175,.13))}.b1{width:24%;height:19%;left:9%;top:14%}.b2{width:18%;height:24%;left:37%;top:10%;transform:translateZ(70px)}.b3{width:24%;height:18%;right:8%;top:17%;transform:translateZ(54px)}.b4{width:20%;height:20%;left:12%;bottom:14%;transform:translateZ(62px)}.b5{width:22%;height:17%;left:39%;bottom:11%}.b6{width:19%;height:25%;right:7%;bottom:11%;transform:translateZ(76px)}
+.park-tree{position:absolute;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d9efd0,#709770 70%);box-shadow:8px 10px 12px rgba(34,66,46,.18);transform:translateZ(34px)}.t1{left:4%;top:42%}.t2{left:31%;top:41%}.t3{left:66%;top:42%}.t4{right:3%;top:43%}.t5{left:34%;bottom:3%}.t6{right:33%;bottom:4%}.park-glow{position:absolute;right:-5%;top:2%;width:66%;height:73%;background:radial-gradient(circle at 60% 40%,rgba(211,232,255,.34),transparent 58%);filter:blur(12px);transform:translateZ(20px)}
+
+@media(max-width:860px){.sbm-loader-screen{backdrop-filter:none;-webkit-backdrop-filter:none}.sbm-corporate-park{opacity:.50}.sbm-corporate-park:before{background:linear-gradient(180deg,rgba(3,16,32,.93),rgba(3,16,32,.74) 56%,rgba(9,28,51,.58))}.park-campus{right:-28%;bottom:-26%;width:100%;height:70%;transform:rotateX(64deg) rotateZ(-12deg)}.b5,.b6,.t5,.t6{display:none}.park-glow{filter:none}.sbm-corporate-park:after{display:none}}
+@media(max-width:600px){.sbm-loader-card{width:132px;padding:16px 15px 13px}.sbm-loader-mark{font-size:21px}.sbm-corporate-park{opacity:.38}.park-campus{right:-45%;bottom:-12%;width:125%;height:60%}.park-tree{width:14px;height:14px}}
+@media(prefers-reduced-motion:reduce){.sbm-loader-line i{animation:none}.sbm-loader-screen{animation:sbmLoaderScreen .15s linear .1s forwards}.sbm-corporate-park{transform:none!important}.park-campus{transform:rotateX(61deg) rotateZ(-12deg)!important}}

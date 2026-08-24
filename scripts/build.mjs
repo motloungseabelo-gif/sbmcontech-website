@@ -1,4 +1,4 @@
-import { cp, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { minify as minifyCss } from 'csso';
 import { minify as minifyHtml } from 'html-minifier-terser';
@@ -21,6 +21,7 @@ if(!minifiedJavaScript.code)throw new Error('JavaScript minification produced no
 
 await writeFile(join(root,'style.min.css'),minifiedCss);
 await writeFile(join(root,'script.min.js'),minifiedJavaScript.code);
+await rm(dist,{recursive:true,force:true});
 await mkdir(dist,{recursive:true});
 
 const entries=await readdir(root,{withFileTypes:true});

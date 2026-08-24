@@ -6,9 +6,11 @@ const failures=[];
 const assert=(condition,message)=>{if(!condition)failures.push(message)};
 const entries=await readdir(root,{withFileTypes:true});
 const htmlFiles=entries.filter(entry=>entry.isFile()&&entry.name.endsWith('.html')).map(entry=>entry.name);
+let hasInsightsEntryPoint=false;
 
 for(const file of htmlFiles){
   const html=await readFile(join(root,file),'utf8');
+  if(file!=='insights.html'&&html.includes('href="insights.html"'))hasInsightsEntryPoint=true;
   assert(html.includes('width=device-width,initial-scale=1,viewport-fit=cover'),`${file}: responsive viewport metadata is missing.`);
   assert(!/fonts\.googleapis\.com|fonts\.gstatic\.com/.test(html),`${file}: external Google Fonts dependency remains.`);
   assert(html.includes('href="style.min.css"'),`${file}: minified stylesheet is not referenced.`);
@@ -37,6 +39,8 @@ for(const file of htmlFiles){
     assert(links<=5,`${file}: primary navigation has ${links} links; keep it to five or fewer.`);
   }
 }
+
+assert(hasInsightsEntryPoint,'Insights must remain reachable from another published page.');
 
 const searchable=(await Promise.all([
   readFile(join(root,'about.html'),'utf8'),

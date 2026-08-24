@@ -1,0 +1,30 @@
+{
+  "name": "sbmcontech-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:js": "eslint script.js sw.js scripts/*.mjs",
+    "lint:css": "stylelint \"styles/**/*.css\"",
+    "test:performance": "node scripts/performance-budget.mjs",
+    "test:responsive": "node scripts/responsive-check.mjs",
+    "quality": "npm run build && npm run lint && npm run test:performance && npm run test:responsive",
+    "preview": "node scripts/serve.mjs",
+    "lighthouse:ci": "lhci autorun --config=.lighthouserc.cjs"
+  },
+  "devDependencies": {
+    "@lhci/cli": "0.15.1",
+    "csso": "5.0.5",
+    "eslint": "10.9.1",
+    "globals": "17.11.0",
+    "html-minifier-terser": "7.2.0",
+    "playwright-core": "1.62.1",
+    "stylelint": "17.14.1",
+    "terser": "5.50.0"
+  }
+}

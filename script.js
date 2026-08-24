@@ -1,7 +1,47 @@
 (()=>{const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-function globalUI(){const nav=$('#siteNav'),toggle=$('#navToggle');if(toggle&&nav){toggle.addEventListener('click',()=>{const open=toggle.getAttribute('aria-expanded')!=='true';toggle.setAttribute('aria-expanded',String(open));nav.classList.toggle('show',open)});nav.addEventListener('click',e=>{if(e.target.closest('a')){nav.classList.remove('show');toggle.setAttribute('aria-expanded','false')}})}
-$$('[data-year]').forEach(el=>el.textContent=new Date().getFullYear());const progress=$('#scrollProgress'),top=$('#backToTop');let uiRaf=0;const paintScrollUI=()=>{uiRaf=0;if(progress){const h=document.documentElement.scrollHeight-innerHeight;progress.style.width=(h?scrollY/h*100:0)+'%'}if(top)top.classList.toggle('show',scrollY>420)};const onScroll=()=>{if(!uiRaf)uiRaf=requestAnimationFrame(paintScrollUI)};paintScrollUI();addEventListener('scroll',onScroll,{passive:true});top?.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
-const reveal=$$('.reveal');if(!('IntersectionObserver'in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)reveal.forEach(x=>x.classList.add('show'));else{const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target)}}),{threshold:.1});reveal.forEach(x=>io.observe(x))}}
+function globalUI(){
+  const nav=$('#siteNav'),toggle=$('#navToggle');
+  const closeNav=()=>{nav?.classList.remove('show');toggle?.setAttribute('aria-expanded','false')};
+  if(toggle&&nav){
+    toggle.addEventListener('click',()=>{
+      const open=toggle.getAttribute('aria-expanded')!=='true';
+      toggle.setAttribute('aria-expanded',String(open));
+      nav.classList.toggle('show',open);
+    });
+    nav.addEventListener('click',e=>{if(e.target.closest('a'))closeNav()});
+    addEventListener('keydown',e=>{if(e.key==='Escape')closeNav()});
+    document.addEventListener('pointerdown',e=>{if(!e.target.closest('.site-header'))closeNav()},{passive:true});
+  }
+
+  $$('[data-year]').forEach(el=>el.textContent=new Date().getFullYear());
+  const progress=$('#scrollProgress'),top=$('#backToTop');
+  let uiRaf=0;
+  const paintScrollUI=()=>{
+    uiRaf=0;
+    if(progress){const h=document.documentElement.scrollHeight-innerHeight;progress.style.width=(h?scrollY/h*100:0)+'%'}
+    if(top)top.classList.toggle('show',scrollY>420);
+  };
+  const onScroll=()=>{if(!uiRaf)uiRaf=requestAnimationFrame(paintScrollUI)};
+  paintScrollUI();
+  addEventListener('scroll',onScroll,{passive:true});
+  top?.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+
+  const reveal=$$('.reveal');
+  if(!('IntersectionObserver'in window)||matchMedia('(prefers-reduced-motion: reduce)').matches){
+    reveal.forEach(x=>x.classList.add('show'));
+  }else{
+    const io=new IntersectionObserver(es=>es.forEach(e=>{
+      if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target)}
+    }),{threshold:.1});
+    reveal.forEach(x=>io.observe(x));
+  }
+
+  if('serviceWorker'in navigator&&/^https?:$/.test(location.protocol)){
+    const register=()=>navigator.serviceWorker.register('./sw.js').catch(()=>undefined);
+    if('requestIdleCallback'in window)requestIdleCallback(register,{timeout:3000});
+    else addEventListener('load',()=>setTimeout(register,0),{once:true});
+  }
+}
 function projectScope(){const form=$('#projectForm');if(!form)return;const steps=$$('.scope-step'),progress=$('#scopeProgress');let current=0;const show=i=>{current=Math.max(0,Math.min(steps.length-1,i));steps.forEach((s,j)=>s.classList.toggle('active',j===current));if(progress)progress.textContent=String(current+1).padStart(2,'0')+' / 04';if(current===3)generateBrief();$('#scopeCard')?.scrollIntoView({behavior:'smooth',block:'nearest'})};
 function validate(){const fields=[...steps[current].querySelectorAll('input,textarea,select')].filter(x=>x.required);for(const f of fields){if(f.type==='radio'){if(!steps[current].querySelector(`input[name="${f.name}"]:checked`)){f.reportValidity();return false}}else if(!f.checkValidity()){f.reportValidity();return false}}return true}
 $$('.scope-next').forEach(b=>b.addEventListener('click',()=>{if(validate())show(current+1)}));$$('.scope-back').forEach(b=>b.addEventListener('click',()=>show(current-1)));
@@ -68,15 +108,20 @@ document.addEventListener('DOMContentLoaded',()=>{globalUI();projectScope();lab(
       const intensity=mobile.matches ? .48 : (lite ? .68 : 1);
       const range=mobile.matches ? 12 : 22;
 
-      document.documentElement.style.setProperty('--scroll-velocity',`${(velocity*.035).toFixed(3)}deg`);
-      document.documentElement.style.setProperty('--scroll-page',`${Math.min(1,currentY/Math.max(1,document.documentElement.scrollHeight-vh)).toFixed(4)}`);
-
+      const maxScroll=Math.max(1,document.documentElement.scrollHeight-vh);
+      const measurements=[];
       activeDepth.forEach(el=>{
         const r=el.getBoundingClientRect();
         const p=Math.max(-1.15,Math.min(1.15,(r.top+r.height*.5-vh*.5)/vh));
         const y=Math.max(-range,Math.min(range,-p*range))*intensity;
         const x=pointerX*(mobile.matches?0:7)*intensity;
         const tilt=(p*(mobile.matches?1.15:1.8))*intensity;
+        measurements.push({el,y,x,tilt});
+      });
+
+      document.documentElement.style.setProperty('--scroll-velocity',`${(velocity*.035).toFixed(3)}deg`);
+      document.documentElement.style.setProperty('--scroll-page',`${Math.min(1,currentY/maxScroll).toFixed(4)}`);
+      measurements.forEach(({el,y,x,tilt})=>{
         el.style.setProperty('--depth-y',`${y.toFixed(2)}px`);
         el.style.setProperty('--depth-y-inv',`${(-y).toFixed(2)}px`);
         el.style.setProperty('--depth-y-soft',`${(y*.45).toFixed(2)}px`);
@@ -91,7 +136,6 @@ document.addEventListener('DOMContentLoaded',()=>{globalUI();projectScope();lab(
     const queue=()=>{if(!raf)raf=requestAnimationFrame(paint)};
     addEventListener('scroll',queue,{passive:true});
     addEventListener('resize',queue,{passive:true});
-    queue();
   }
 
   function pointerDepth(){
@@ -134,5 +178,9 @@ document.addEventListener('DOMContentLoaded',()=>{globalUI();projectScope();lab(
     if(lite)document.body.classList.add('motion-lite');
     preparePortraits(); sectionMasks(); scroll3D(); pointerDepth(); pageWipe();
   }
-  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',boot,{once:true}):boot();
+  function scheduleBoot(){
+    if('requestIdleCallback'in window)requestIdleCallback(boot,{timeout:1200});
+    else setTimeout(boot,0);
+  }
+  document.readyState==='complete'?scheduleBoot():addEventListener('load',scheduleBoot,{once:true});
 })();

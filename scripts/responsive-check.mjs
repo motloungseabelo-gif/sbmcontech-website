@@ -31,7 +31,7 @@ await new Promise((resolve,reject)=>{
 const browser=await chromium.launch({
   executablePath,
   headless:true,
-  args:['--no-sandbox','--disable-dev-shm-usage','--single-process','--no-proxy-server']
+  args:['--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--no-proxy-server']
 });
 const pages=['index.html','about.html','contact.html','app.html'];
 const viewports=[

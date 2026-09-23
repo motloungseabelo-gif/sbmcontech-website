@@ -9,11 +9,12 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "lint": "npm run lint:js && npm run lint:css",
-    "lint:js": "eslint script.js sw.js scripts/*.mjs",
-    "lint:css": "stylelint \"styles/**/*.css\"",
+    "lint:js": "eslint script.js lael.js sw.js scripts/*.mjs worker/src/*.js",
+    "lint:css": "stylelint \"styles/**/*.css\" lael.css",
     "test:performance": "node scripts/performance-budget.mjs",
+    "test:lael": "node --test tests/lael-worker.test.mjs",
     "test:responsive": "node scripts/responsive-check.mjs",
-    "quality": "npm run build && npm run lint && npm run test:performance && npm run test:responsive",
+    "quality": "npm run build && npm run lint && npm run test:performance && npm run test:lael && npm run test:responsive",
     "preview": "node scripts/serve.mjs",
     "lighthouse:ci": "lhci autorun --config=.lighthouserc.cjs"
   },

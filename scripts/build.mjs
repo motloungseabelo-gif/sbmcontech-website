@@ -19,8 +19,18 @@ const minifiedJavaScript=await minifyJavaScript(sourceJavaScript,{
 
 if(!minifiedJavaScript.code)throw new Error('JavaScript minification produced no output.');
 
+const laelCss=minifyCss(await readFile(join(root,'lael.css'),'utf8'),{restructure:true}).css;
+const laelJavaScript=await minifyJavaScript(await readFile(join(root,'lael.js'),'utf8'),{
+  compress:{passes:2},
+  mangle:true,
+  format:{comments:false}
+});
+if(!laelJavaScript.code)throw new Error('Lael minification produced no output.');
+
 await writeFile(join(root,'style.min.css'),minifiedCss);
 await writeFile(join(root,'script.min.js'),minifiedJavaScript.code);
+await writeFile(join(root,'lael.min.css'),laelCss);
+await writeFile(join(root,'lael.min.js'),laelJavaScript.code);
 await rm(dist,{recursive:true,force:true});
 await mkdir(dist,{recursive:true});
 
@@ -39,14 +49,14 @@ for(const entry of htmlFiles){
   await writeFile(join(dist,entry.name),output);
 }
 
-for(const file of ['CNAME','robots.txt','sitemap.xml','style.min.css','script.min.js','sw.js']){
+for(const file of ['CNAME','robots.txt','sitemap.xml','style.min.css','script.min.js','lael.min.css','lael.min.js','lael-config.json','sw.js']){
   await cp(join(root,file),join(dist,file));
 }
 for(const directory of ['fonts','images']){
   await cp(join(root,directory),join(dist,directory),{recursive:true});
 }
 
-const headers=`/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n\n/*.html\n  Cache-Control: no-cache\n\n/sw.js\n  Cache-Control: no-cache\n\n/*.css\n  Cache-Control: public, max-age=86400, stale-while-revalidate=604800\n\n/*.js\n  Cache-Control: public, max-age=86400, stale-while-revalidate=604800\n\n/fonts/*\n  Cache-Control: public, max-age=31536000, immutable\n\n/images/*\n  Cache-Control: public, max-age=31536000, immutable\n`;
+const headers=`/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Permissions-Policy: camera=(), microphone=(self), geolocation=()\n\n/*.html\n  Cache-Control: no-cache\n\n/sw.js\n  Cache-Control: no-cache\n\n/*.css\n  Cache-Control: public, max-age=86400, stale-while-revalidate=604800\n\n/*.js\n  Cache-Control: public, max-age=86400, stale-while-revalidate=604800\n\n/fonts/*\n  Cache-Control: public, max-age=31536000, immutable\n\n/images/*\n  Cache-Control: public, max-age=31536000, immutable\n`;
 await writeFile(join(dist,'_headers'),headers);
 
 console.log(`Built ${htmlFiles.length} pages, ${minifiedCss.length} CSS bytes and ${minifiedJavaScript.code.length} JavaScript bytes.`);

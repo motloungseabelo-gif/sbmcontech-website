@@ -184,3 +184,51 @@ document.addEventListener('DOMContentLoaded',()=>{globalUI();projectScope();lab(
   }
   document.readyState==='complete'?scheduleBoot():addEventListener('load',scheduleBoot,{once:true});
 })();
+
+// Render a tiny launcher first. Load the full assistant only when a visitor opens it.
+(() => {
+  function addLaelLauncher(){
+    const preview=document.createElement('button');
+    preview.type='button';
+    preview.className='lael-preview';
+    preview.setAttribute('aria-label','Open Lael assistant');
+    preview.innerHTML='<span class="lael-preview-orb" aria-hidden="true"></span><span><b>ASK LAEL</b><small>SBM ASSISTANT</small></span>';
+    document.body.appendChild(preview);
+    document.body.classList.add('lael-preview-ready');
+    let loading=false;
+    preview.addEventListener('click',()=>{
+      if(loading)return;
+      loading=true;
+      preview.disabled=true;
+      preview.querySelector('b').textContent='OPENING…';
+      const stylesheet=document.createElement('link');
+      const recover=()=>{
+        loading=false;
+        preview.disabled=false;
+        preview.querySelector('b').textContent='ASK LAEL';
+        stylesheet.remove();
+      };
+      stylesheet.rel='stylesheet';
+      stylesheet.href='lael.min.css';
+      stylesheet.addEventListener('load',()=>{
+        const script=document.createElement('script');
+        script.src='lael.min.js';
+        script.async=true;
+        script.addEventListener('load',()=>{
+          preview.remove();
+          document.body.classList.remove('lael-preview-ready');
+          document.querySelector('.lael-launcher')?.click();
+        },{once:true});
+        script.addEventListener('error',()=>{script.remove();recover()},{once:true});
+        document.body.appendChild(script);
+      },{once:true});
+      stylesheet.addEventListener('error',recover,{once:true});
+      document.head.appendChild(stylesheet);
+    });
+  }
+  function scheduleLauncher(){
+    if('requestIdleCallback'in window)requestIdleCallback(addLaelLauncher,{timeout:1200});
+    else setTimeout(addLaelLauncher,300);
+  }
+  document.readyState==='complete'?scheduleLauncher():addEventListener('load',scheduleLauncher,{once:true});
+})();

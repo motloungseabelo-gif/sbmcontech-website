@@ -15,6 +15,22 @@ Official website for **SBM ConTech Industries**, a South African technology comp
 - Project scoping and contact
 - Privacy and terms
 
+## Lael assistant
+
+The small "Ask Lael" launcher appears across the current website after the main page finishes loading; the full assistant loads only when a visitor opens it. Visitors can ask about SBM's services, project intake, and contact routes; open relevant site pages; choose a speaking style and an English voice available on their own device; and use push-to-talk when their browser supports speech recognition. Voice replies are **off by default**. The microphone starts only when a visitor presses its button. The browser may use its own speech service to transcribe audio. Text chat remains usable without voice support.
+
+The website's built-in site guide works immediately, without a server or API key. It gives grounded answers from the approved SBM service and contact information in `lael.js`. It does not invent prices or accept bookings. Questions and answers stay in the current page and are not saved by the site guide.
+
+An optional AI endpoint is included in `worker/`. The static GitHub Pages site cannot safely hold an API key, so AI replies require a separately deployed Cloudflare Worker and an OpenAI API account. The Worker limits input length, caps output, applies a per-IP rate limit, restricts browser origins to the SBM domains, and uses `store: false`. It does not persist chat history. Browser origin checks alone are not authentication; monitor API usage and keep spending limits on the provider account before activating a public endpoint.
+
+To activate AI replies after reviewing costs and the privacy wording:
+
+1. Deploy `worker/` from a Cloudflare account using its `wrangler.toml`. Set `OPENAI_API_KEY` as a **Worker secret**, never in the website, GitHub, or `lael-config.json`. The optional `OPENAI_MODEL` variable is set in the Worker config.
+2. Verify `POST https://<your-worker-domain>/chat` with a permitted SBM `Origin` header. The Worker needs the `LAEL_RATE_LIMITER` binding in `wrangler.toml`.
+3. Put the deployed `https://<your-worker-domain>/chat` URL in `lael-config.json` and run `npm run build`. Publish the site through the existing review and deploy process.
+
+If the AI endpoint is unavailable, Lael says so and continues with its local site guide. Device voices vary by browser and operating system; the three speaking styles adjust delivery and do not create new synthetic voice identities.
+
 The primary navigation is intentionally limited to five clear actions. Industries, Insights and SBM Labs remain available through the footer and contextual links.
 
 ## Performance and mobile update

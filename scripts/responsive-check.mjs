@@ -1,4 +1,4 @@
-import { access } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { chromium } from 'playwright-core';
 
@@ -41,9 +41,14 @@ const viewports=[
   {width:1024,height:900}
 ];
 const failures=[];
+const {apiUrl}=JSON.parse(await readFile('lael-config.json','utf8'));
 
 try{
   const page=await browser.newPage();
+  await page.route('**/lael-config.json',route=>route.fulfill({
+    contentType:'application/json',
+    body:JSON.stringify({apiUrl:''})
+  }));
   for(const viewport of viewports){
     await page.setViewportSize(viewport);
     for(const path of pages){
@@ -92,6 +97,33 @@ try{
           failures.push(`${label}: the site guide did not answer a service question.`);
       }
     }
+  }
+  await page.unroute('**/lael-config.json');
+  if(apiUrl){
+    const expectedReply='AI test reply: SBM can build a custom web application.';
+    let apiCalls=0;
+    const corsHeaders={
+      'Access-Control-Allow-Origin':'http://127.0.0.1:4173',
+      'Access-Control-Allow-Methods':'POST, OPTIONS',
+      'Access-Control-Allow-Headers':'Content-Type'
+    };
+    await page.route(apiUrl,async route=>{
+      if(route.request().method()==='OPTIONS'){
+        await route.fulfill({status:204,headers:corsHeaders});
+        return;
+      }
+      apiCalls++;
+      const messages=route.request().postDataJSON()?.messages;
+      if(messages?.at(-1)?.content!=='What can SBM build?')
+        failures.push('Lael did not send the service question to the configured API.');
+      await route.fulfill({headers:corsHeaders,contentType:'application/json',body:JSON.stringify({reply:expectedReply})});
+    });
+    await page.goto('http://127.0.0.1:4173/index.html',{waitUntil:'load'});
+    await page.locator('.lael-preview').click();
+    await page.waitForFunction(()=>document.querySelector('#laelStatus')?.textContent==='AI CHAT CONFIGURED');
+    await page.locator('[data-question="What can SBM build?"]').click();
+    await page.getByText(expectedReply,{exact:true}).waitFor();
+    if(apiCalls!==1)failures.push(`Lael sent ${apiCalls} API requests for one question.`);
   }
 }finally{
   await browser.close();

@@ -25,7 +25,7 @@ An optional AI endpoint is included in `worker/`. The static GitHub Pages site c
 
 To activate AI replies after reviewing costs and the privacy wording:
 
-1. Deploy `worker/` from a Cloudflare account using its `wrangler.toml`. Set `OPENAI_API_KEY` as a **Worker secret**, never in the website, GitHub, or `lael-config.json`. The optional `OPENAI_MODEL` variable is set in the Worker config.
+1. In Cloudflare Workers & Pages, create an application by importing this GitHub repository. Set the project name to `sbm-lael-api`, use the `main` branch, leave the optional build command blank, and deploy from the repository root with the default `npx wrangler deploy` command. The root `wrangler.toml` points only to `worker/src/index.js`; the website remains hosted on GitHub Pages. Set `OPENAI_API_KEY` as a **Worker secret** under Settings > Variables and Secrets, never in the website, GitHub, or `lael-config.json`. The optional `OPENAI_MODEL` variable is set in `wrangler.toml`.
 2. Verify `POST https://<your-worker-domain>/chat` with a permitted SBM `Origin` header. The Worker needs the `LAEL_RATE_LIMITER` binding in `wrangler.toml`.
 3. Put the deployed `https://<your-worker-domain>/chat` URL in `lael-config.json` and run `npm run build`. Publish the site through the existing review and deploy process.
 

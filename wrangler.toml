@@ -2,6 +2,10 @@ name = "sbm-lael-api"
 main = "worker/src/index.js"
 compatibility_date = "2026-09-01"
 
+[observability]
+enabled = true
+head_sampling_rate = 1
+
 [vars]
 OPENAI_MODEL = "gpt-5.4-mini"
 

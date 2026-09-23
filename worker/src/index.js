@@ -74,14 +74,30 @@ export default {
           signal: controller.signal
         });
       } finally { clearTimeout(timeout); }
-      if (!upstream.ok) return json({ error: 'AI service unavailable' }, 502, origin);
+      if (!upstream.ok) {
+        let code = 'unknown';
+        try {
+          const error = await upstream.json();
+          const upstreamCode = error?.error?.code || error?.error?.type;
+          if (typeof upstreamCode === 'string') code = upstreamCode.slice(0, 64);
+        } catch { /* The upstream response may not be JSON. */ }
+        console.error('Lael OpenAI request failed', { status: upstream.status, code });
+        return json({ error: 'AI service unavailable' }, 502, origin);
+      }
       const response = await upstream.json();
       const reply = response.output?.flatMap(item => item.content || [])
         .filter(part => part.type === 'output_text')
         .map(part => part.text)
         .join('\n')?.trim();
-      if (!reply) return json({ error: 'AI service unavailable' }, 502, origin);
+      if (!reply) {
+        console.error('Lael OpenAI response had no text', { status: response.status || 'unknown' });
+        return json({ error: 'AI service unavailable' }, 502, origin);
+      }
       return json({ reply: reply.slice(0, 1400) }, 200, origin);
-    } catch { return json({ error: 'AI service unavailable' }, 502, origin); }
+    } catch (error) {
+      const name = ['AbortError', 'SyntaxError', 'TypeError'].includes(error?.name) ? error.name : 'unknown';
+      console.error('Lael OpenAI request error', { name });
+      return json({ error: 'AI service unavailable' }, 502, origin);
+    }
   }
 };

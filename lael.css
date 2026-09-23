@@ -1,0 +1,130 @@
+/* All selectors are scoped to Lael so the site design stays independent. */
+.lael-root {
+  --lael-navy: #07111f;
+  --lael-blue: #4e78ff;
+  --lael-gold: #e4bc85;
+  --lael-muted: #acbad0;
+  position: fixed;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  color: #f8f9fd;
+  font: 400 0.9rem/1.5 "DM Sans", system-ui, sans-serif;
+}
+.lael-root * { box-sizing: border-box; }
+.lael-root button, .lael-root select, .lael-root textarea { font: inherit; }
+.lael-root button { cursor: pointer; }
+.lael-root button:disabled { cursor: not-allowed; opacity: 0.55; }
+.lael-root :focus-visible { outline: 0.1875rem solid #a4bbff; outline-offset: 0.125rem; }
+.lael-root .lael-launcher {
+  display: flex; align-items: center; gap: 0.8rem;
+  min-height: 4.25rem; padding: 0.55rem 1.25rem 0.55rem 0.55rem;
+  margin-left: auto; color: #fff; border: 1px solid rgba(228,188,133,0.42);
+  border-radius: 999px; background: linear-gradient(112deg, #071323, #101f39);
+  box-shadow: 0 1rem 2.5rem rgba(0,0,0,0.34), 0 0 1.4rem rgba(62,99,255,0.23);
+  transition: transform 160ms ease, border-color 160ms ease;
+}
+.lael-root .lael-launcher:hover { transform: translateY(-0.16rem); border-color: var(--lael-gold); }
+.lael-root .lael-launcher-label { display: grid; text-align: left; line-height: 1.15; }
+.lael-root .lael-launcher-label b { font: 700 0.87rem "Space Grotesk", sans-serif; letter-spacing: 0.12em; }
+.lael-root .lael-launcher-label small { margin-top: 0.25rem; color: var(--lael-muted); font-size: 0.61rem; letter-spacing: 0.12em; }
+.lael-root .lael-orb {
+  position: relative; display: grid; place-items: center;
+  flex: 0 0 3.05rem; width: 3.05rem; height: 3.05rem;
+  border: 1px solid rgba(156,180,255,0.8); border-radius: 50%;
+  background: radial-gradient(circle at 40% 38%, #f4d6a6 0, #7c9dff 13%, #3e62df 31%, #101d42 60%, #090f23 100%);
+  box-shadow: inset 0 0 0.8rem #82a5ff, 0 0 1.1rem rgba(76,114,255,0.58);
+  animation: lael-breathe 3.6s ease-in-out infinite;
+}
+.lael-root .lael-orb::after { content: ""; position: absolute; inset: 0.42rem; border: 1px solid rgba(255,255,255,0.58); border-radius: 50%; }
+.lael-root .lael-orb i { width: 0.35rem; height: 0.35rem; border-radius: 50%; background: #fff; box-shadow: 0 0 0.6rem #fff; }
+.lael-root .lael-orb-small { flex-basis: 2.45rem; width: 2.45rem; height: 2.45rem; }
+.lael-root .lael-panel {
+  order: -1;
+  width: min(26.25rem, calc(100vw - 1.5rem));
+  height: min(39rem, calc(100dvh - 7rem)); min-height: min(30rem, calc(100dvh - 7rem));
+  margin-bottom: 0.75rem; display: flex; flex-direction: column; overflow: hidden;
+  border: 1px solid rgba(120,146,195,0.46); border-radius: 1.35rem;
+  background: #0a1525;
+  box-shadow: 0 1.5rem 4rem rgba(0,0,0,0.48), 0 0 0 1px rgba(255,255,255,0.03) inset;
+}
+.lael-root .lael-panel[hidden] { display: none !important; }
+.lael-root .lael-header {
+  display: flex; align-items: center; gap: 0.85rem; flex: 0 0 auto;
+  padding: 0.9rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.11);
+  background: linear-gradient(110deg, #0b1b32 10%, #182744 62%, #281d24 120%);
+}
+.lael-root .lael-identity { display: grid; gap: 0.12rem; flex: 1; }
+.lael-root .lael-identity strong { font: 700 1.05rem "Space Grotesk", sans-serif; letter-spacing: 0.12em; }
+.lael-root .lael-identity strong span { color: var(--lael-gold); font-size: 0.7rem; }
+.lael-root .lael-identity small { color: #b9c8e5; font-size: 0.59rem; letter-spacing: 0.17em; }
+.lael-root .lael-icon-button {
+  display: grid; place-items: center; flex: 0 0 auto; width: 2.75rem; height: 2.75rem;
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 0.8rem;
+  background: rgba(255,255,255,0.05); color: #fff; font-size: 1.45rem;
+}
+.lael-root .lael-icon-button:hover { background: rgba(255,255,255,0.13); }
+.lael-root .lael-conversation {
+  display: flex; flex-direction: column; gap: 0.9rem; flex: 1 1 auto;
+  min-height: 0; padding: 1.15rem 1rem; overflow-y: auto; overscroll-behavior: contain;
+  background: radial-gradient(circle at 50% 0, rgba(53,91,182,0.11), transparent 60%);
+}
+.lael-root .lael-message { max-width: 91%; align-self: flex-start; overflow-wrap: anywhere; }
+.lael-root .lael-message-user { align-self: flex-end; }
+.lael-root .lael-message-label { display: block; margin-bottom: 0.3rem; color: var(--lael-gold); font: 700 0.59rem "Space Grotesk", sans-serif; letter-spacing: 0.14em; }
+.lael-root .lael-message-user .lael-message-label { text-align: right; color: #bacbff; }
+.lael-root .lael-message p {
+  margin: 0; padding: 0.85rem 1rem; border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 0.25rem 1rem 1rem 1rem; background: #15253c; color: #f6f8ff;
+  font-size: 0.875rem; line-height: 1.55;
+}
+.lael-root .lael-message-user p { background: #274ac4; border-color: #5d7ff7; border-radius: 1rem 0.25rem 1rem 1rem; }
+.lael-root .lael-message a { display: inline-flex; margin: 0.5rem 0 0 0.65rem; color: #f5ce94; font-size: 0.81rem; font-weight: 700; text-decoration: underline; text-underline-offset: 0.25rem; }
+.lael-root .lael-suggestions { display: flex; flex-wrap: wrap; gap: 0.35rem; flex: 0 0 auto; padding: 0.55rem 0.9rem; }
+.lael-root .lael-suggestions button {
+  min-height: 2.75rem; padding: 0.4rem 0.65rem; border: 1px solid #526887;
+  border-radius: 99px; color: #e6edff; background: #182840; font-size: 0.73rem;
+}
+.lael-root .lael-suggestions button:hover { border-color: var(--lael-gold); }
+.lael-root .lael-controls {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
+  padding: 0.6rem 0.9rem; border-block: 1px solid rgba(255,255,255,0.09);
+  background: #0d1c31;
+}
+.lael-root .lael-voice-toggle { min-height: 2.75rem; padding: 0.4rem 0.65rem; border: 1px solid #4b6080; border-radius: 0.55rem; background: #1c304d; color: #fff; font-size: 0.76rem; }
+.lael-root .lael-voice-toggle[aria-pressed="true"] { border-color: var(--lael-gold); color: #ffe0b2; }
+.lael-root .lael-select-label { display: flex; align-items: center; gap: 0.3rem; color: #bbc9dd; font-size: 0.68rem; }
+.lael-root .lael-select-label select {
+  max-width: 7.2rem; min-height: 2.75rem; padding: 0.35rem 0.3rem;
+  border: 1px solid #4b6080; border-radius: 0.55rem;
+  background: #132641; color: #fff; font-size: 1rem;
+}
+.lael-root .lael-form { display: flex; align-items: flex-end; gap: 0.35rem; flex: 0 0 auto; padding: 0.65rem 0.75rem 0.35rem; }
+.lael-root .lael-input-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.lael-root .lael-form textarea {
+  flex: 1; min-width: 0; min-height: 2.75rem; max-height: 5rem; resize: vertical;
+  padding: 0.6rem 0.75rem; border: 1px solid #526887; border-radius: 0.7rem;
+  background: #0a172a; color: #fff; font-size: 1rem; line-height: 1.35;
+}
+.lael-root .lael-form textarea::placeholder { color: #a9b6cb; }
+.lael-root .lael-form .lael-mic { font-size: 1.1rem; color: #b9caff; }
+.lael-root .lael-form .lael-mic.lael-listening { color: #ffce7f; border-color: #ffce7f; animation: lael-breathe 1s infinite; }
+.lael-root .lael-send { flex: 0 0 2.75rem; width: 2.75rem; height: 2.75rem; border: 0; border-radius: 0.7rem; background: #3d61e0; color: #fff; font-size: 1.35rem; }
+.lael-root .lael-send:hover { background: #5077ff; }
+.lael-root .lael-note { margin: 0; flex: 0 0 auto; padding: 0.2rem 0.95rem 0.75rem; color: #afbdd3; font-size: 0.68rem; line-height: 1.4; }
+.lael-present .back-top { bottom: 6.4rem; }
+@keyframes lael-breathe { 50% { box-shadow: inset 0 0 1rem #bad2ff, 0 0 1.7rem rgba(99,138,255,0.85); } }
+@media (max-width: 38rem) {
+  .lael-root { right: max(0.5rem, env(safe-area-inset-right)); bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+  .lael-root .lael-panel { width: calc(100vw - 1rem); height: min(42rem, calc(100dvh - 6rem)); }
+  .lael-root .lael-controls { gap: 0.45rem; }
+  .lael-root .lael-select-label select { max-width: 6.3rem; }
+}
+@media (max-height: 34rem) { .lael-root .lael-panel { min-height: 0; height: calc(100dvh - 6.5rem); } }
+@media (prefers-reduced-motion: reduce) {
+  .lael-root .lael-orb, .lael-root .lael-form .lael-mic.lael-listening { animation: none; }
+  .lael-root .lael-launcher { transition: none; }
+}

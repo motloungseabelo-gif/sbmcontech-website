@@ -1,4 +1,4 @@
-const CACHE_NAME='sbm-contech-v1';
+const CACHE_NAME='sbm-contech-v2';
 const CORE_ASSETS=[
   './',
   './index.html',

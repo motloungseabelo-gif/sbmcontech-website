@@ -54,6 +54,8 @@ assert(/overflow-wrap:\s*break-word/.test(searchable),'Long-word overflow protec
 const budgets={
   'style.min.css':70000,
   'script.min.js':20000,
+  'lael.min.css':13000,
+  'lael.min.js':19000,
   'images/logo-96.webp':5000,
   'images/logo-256.webp':15000,
   'fonts/dm-sans-latin.woff2':50000,

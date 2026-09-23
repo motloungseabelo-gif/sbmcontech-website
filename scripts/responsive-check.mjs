@@ -70,6 +70,27 @@ try{
         }));
         if(targets.some(target=>target.width<44||target.height<44))failures.push(`${label}: a mobile navigation target is below 44px.`);
       }
+
+      if(path==='index.html'&&viewport.width<=412){
+        await page.locator('.lael-preview').waitFor();
+        if(await page.locator('.lael-root').count())failures.push(`${label}: full chat loaded before anyone opened it.`);
+        await page.locator('.lael-preview').click();
+        await page.locator('.lael-panel').waitFor();
+        const chat=await page.evaluate(()=>{
+          const panel=document.querySelector('.lael-panel').getBoundingClientRect();
+          const launcher=document.querySelector('.lael-launcher').getBoundingClientRect();
+          return {
+            fits:panel.top>=0&&panel.bottom<launcher.top&&launcher.bottom<=innerHeight,
+            fontSize:Number.parseFloat(getComputedStyle(document.querySelector('.lael-voice')).fontSize)
+          };
+        });
+        if(!chat.fits)failures.push(`${label}: open chat does not fit above its launcher.`);
+        if(chat.fontSize<16)failures.push(`${label}: voice selection text is smaller than 16px.`);
+        await page.locator('[data-question="What can SBM build?"]').click();
+        const laelReply=await page.locator('.lael-message-assistant').last().innerText();
+        if(!laelReply.includes('custom web applications'))
+          failures.push(`${label}: the site guide did not answer a service question.`);
+      }
     }
   }
 }finally{

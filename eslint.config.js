@@ -5,7 +5,7 @@ export default [
     ignores: ['dist/**', 'node_modules/**', '*.min.js', 'lighthouse-results/**']
   },
   {
-    files: ['script.js', 'sw.js'],
+    files: ['script.js', 'lael.js', 'sw.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'script',
@@ -46,6 +46,18 @@ export default [
       'require-yield': 'error',
       'use-isnan': 'error',
       'valid-typeof': 'error'
+    }
+  },
+  {
+    files: ['worker/src/*.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: globals.browser
+    },
+    rules: {
+      'no-undef': 'error',
+      'no-unused-vars': 'error'
     }
   },
   {

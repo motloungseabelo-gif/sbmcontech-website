@@ -1,0 +1,14 @@
+name = "sbm-lael-api"
+main = "worker/src/index.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+OPENAI_MODEL = "gpt-5.4-mini"
+
+[[ratelimits]]
+name = "LAEL_RATE_LIMITER"
+namespace_id = "1001"
+
+[ratelimits.simple]
+limit = 8
+period = 60

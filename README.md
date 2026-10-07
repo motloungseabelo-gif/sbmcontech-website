@@ -15,9 +15,9 @@ Official website for **SBM ConTech Industries**, a South African technology comp
 - Project scoping and contact
 - Privacy and terms
 
-## Lael assistant
+## LAEL assistant
 
-The small "Ask Lael" launcher appears across the current website after the main page finishes loading; the full assistant loads only when a visitor opens it. Visitors can ask about SBM's services, project intake, and contact routes; open relevant site pages; choose a speaking style and an English voice available on their own device; and use push-to-talk when their browser supports speech recognition. Voice replies are **off by default**. The microphone starts only when a visitor presses its button. The browser may use its own speech service to transcribe audio. Text chat remains usable without voice support.
+The small "Ask LAEL" launcher appears across the current website after the main page finishes loading; the full assistant loads only when a visitor opens it. Visitors can ask about SBM's services, project intake, and contact routes; open relevant site pages; choose a speaking style and an English voice available on their own device; and use push-to-talk when their browser supports speech recognition. Voice replies are **off by default**. The microphone starts only when a visitor presses its button. The browser may use its own speech service to transcribe audio. Text chat remains usable without voice support.
 
 The website's built-in site guide works immediately, without a server or API key. It gives grounded answers from the approved SBM service and contact information in `lael.js`. It does not invent prices or accept bookings. Questions and answers stay in the current page and are not saved by the site guide.
 
@@ -29,7 +29,11 @@ To activate AI replies after reviewing costs and the privacy wording:
 2. Verify `POST https://<your-worker-domain>/chat` with a permitted SBM `Origin` header. The Worker needs the `LAEL_RATE_LIMITER` binding in `wrangler.toml`.
 3. Put the deployed `https://<your-worker-domain>/chat` URL in `lael-config.json` and run `npm run build`. Publish the site through the existing review and deploy process.
 
-If the AI endpoint is unavailable, Lael says so and continues with its local site guide. Device voices vary by browser and operating system; the three speaking styles adjust delivery and do not create new synthetic voice identities.
+If the AI endpoint is unavailable, LAEL says so and continues with its local site guide. Configuration loading and requests have deadlines, and one turn is sent at a time. Closing and reopening the panel preserves the conversation and any next-question draft in the current page. Navigating away cancels a pending turn; no browser storage is used for chat history.
+
+AI, local-guide and fallback replies share one safe renderer in `lael.js`. It recognises plain URLs, Markdown and HTML links, including encoded HTML, and creates text nodes and approved-protocol anchors. Known SBM destinations display labels such as **Contact page**, **Services page** and **About page**, retaining their query strings and fragments. Speech uses separate natural text; contact enquiries say **“You can reach us through our contact page.”** Failed AI replies retain an explicit unavailability message in both text and speech. Replies are completed JSON responses; there is no streaming speech path.
+
+The panel follows the visual viewport above a mobile keyboard and compacts on short screens. New questions, mute, closing the panel and page navigation cancel speech; closing or leaving also stops microphone input. Device voices vary by browser and operating system; the three speaking styles adjust delivery and do not create new synthetic voice identities.
 
 The primary navigation is intentionally limited to five clear actions. Industries, Insights and SBM Labs remain available through the footer and contextual links.
 
@@ -84,6 +88,8 @@ The preview server runs the production-style site locally with compression, cach
 npm run build
 npm run lint
 npm run test:performance
+npm run test:lael
+npm run test:lael-browser
 npm run test:responsive
 npm run test:site
 npm run lighthouse:ci
@@ -97,7 +103,7 @@ npm run quality
 
 The project uses ESLint, Stylelint, responsive browser testing, asset and internal-link budgets, and Lighthouse CI. GitHub Actions executes these checks on pull requests and changes to `main`.
 
-Responsive checks cover all 15 root HTML pages at 320, 412, 768, 1024 and 1440 pixels. The site regression suite exercises rapid scroll jumps, wheel direction changes, scrollbar dragging, keyboard and emulated touch scrolling, loading and resize changes, reduced motion, fragment navigation, history lifecycle recovery, project-form validation and mocked failures, and offline cache recovery. Form and AI requests in the browser suites use controlled mocks.
+Responsive checks cover all 15 root HTML pages at 320, 412, 768, 1024 and 1440 pixels. The site regression suite exercises rapid scroll jumps, wheel direction changes, scrollbar dragging, keyboard and emulated touch scrolling, loading and resize changes, reduced motion, fragment navigation, history lifecycle recovery, project-form validation and mocked failures, and offline cache recovery. LAEL browser regressions cover semantic links, safe rich-content handling, speech input and cancellation, conversation order, configuration races, deadlines, malformed responses, microphone cleanup and emulated keyboard viewports. Form and AI requests in the browser suites use controlled mocks. Speech tests inspect utterances; they do not claim physical-device audio playback.
 
 Production builds recreate `dist/` from scratch, preventing obsolete files from remaining after a page or asset is removed.
 

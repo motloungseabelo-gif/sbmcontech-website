@@ -128,7 +128,9 @@ try{
     await page.locator('.lael-preview').click();
     await page.waitForFunction(()=>document.querySelector('#laelStatus')?.textContent==='AI CHAT CONFIGURED');
     await page.locator('[data-question="What can SBM build?"]').click();
-    await page.getByText(expectedReply,{exact:true}).waitFor();
+    await page.locator('.lael-message-assistant').last().locator('p').filter({hasText:expectedReply}).waitFor();
+    if(await page.locator('.lael-message-assistant').last().getByRole('link',{name:'Services page',exact:true}).count()!==1)
+      failures.push('LAEL did not retain its service-page action with a configured AI reply.');
     if(apiCalls!==1)failures.push(`Lael sent ${apiCalls} API requests for one question.`);
   }
 }finally{

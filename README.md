@@ -85,6 +85,7 @@ npm run build
 npm run lint
 npm run test:performance
 npm run test:responsive
+npm run test:site
 npm run lighthouse:ci
 ```
 
@@ -95,6 +96,8 @@ npm run quality
 ```
 
 The project uses ESLint, Stylelint, responsive browser testing, asset and internal-link budgets, and Lighthouse CI. GitHub Actions executes these checks on pull requests and changes to `main`.
+
+Responsive checks cover all 15 root HTML pages at 320, 412, 768, 1024 and 1440 pixels. The site regression suite exercises rapid scroll jumps, wheel direction changes, scrollbar dragging, keyboard and emulated touch scrolling, loading and resize changes, reduced motion, fragment navigation, history lifecycle recovery, project-form validation and mocked failures, and offline cache recovery. Form and AI requests in the browser suites use controlled mocks.
 
 Production builds recreate `dist/` from scratch, preventing obsolete files from remaining after a page or asset is removed.
 

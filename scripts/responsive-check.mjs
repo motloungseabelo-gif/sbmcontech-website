@@ -1,4 +1,4 @@
-import { access, readFile } from 'node:fs/promises';
+import { access, readFile, readdir } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { chromium } from 'playwright-core';
 
@@ -33,18 +33,22 @@ const browser=await chromium.launch({
   headless:true,
   args:['--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--no-proxy-server']
 });
-const pages=['index.html','about.html','contact.html','app.html'];
+const pages=(await readdir(process.cwd())).filter(file=>file.endsWith('.html'));
 const viewports=[
   {width:320,height:700},
   {width:412,height:823},
   {width:768,height:900},
-  {width:1024,height:900}
+  {width:1024,height:900},
+  {width:1440,height:900}
 ];
 const failures=[];
 const {apiUrl}=JSON.parse(await readFile('lael-config.json','utf8'));
 
 try{
   const page=await browser.newPage();
+  let pageErrors=[];
+  page.on('pageerror',error=>pageErrors.push(error.message));
+  await page.route('**/*',route=>new URL(route.request().url()).origin==='http://127.0.0.1:4173'?route.continue():route.abort());
   await page.route('**/lael-config.json',route=>route.fulfill({
     contentType:'application/json',
     body:JSON.stringify({apiUrl:''})
@@ -52,6 +56,7 @@ try{
   for(const viewport of viewports){
     await page.setViewportSize(viewport);
     for(const path of pages){
+      pageErrors=[];
       await page.goto(`http://127.0.0.1:4173/${path}`,{waitUntil:'load'});
       const result=await page.evaluate(()=>({
         overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
@@ -61,6 +66,7 @@ try{
         leadershipText:document.body.innerText.match(/chief executive officer|chief financial officer|lirhandzu|kulani theina/i)?.[0]||null
       }));
       const label=`${path} at ${viewport.width}px`;
+      if(pageErrors.length)failures.push(`${label}: browser errors: ${pageErrors.join('; ')}`);
       if(result.overflow>1)failures.push(`${label}: horizontal overflow is ${result.overflow}px.`);
       if(result.navLinks>5)failures.push(`${label}: navigation contains ${result.navLinks} links.`);
       if(!result.h1Visible)failures.push(`${label}: primary heading is not visible.`);
@@ -134,5 +140,5 @@ if(failures.length){
   console.error(failures.map(failure=>`- ${failure}`).join('\n'));
   process.exitCode=1;
 }else{
-  console.log(`Responsive checks passed across ${viewports.length} viewports and ${pages.length} representative pages.`);
+  console.log(`Responsive checks passed across ${viewports.length} viewports and all ${pages.length} published pages.`);
 }

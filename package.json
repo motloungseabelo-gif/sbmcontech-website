@@ -14,7 +14,8 @@
     "test:performance": "node scripts/performance-budget.mjs",
     "test:lael": "node --test tests/lael-worker.test.mjs",
     "test:responsive": "node scripts/responsive-check.mjs",
-    "quality": "npm run build && npm run lint && npm run test:performance && npm run test:lael && npm run test:responsive",
+    "test:site": "node scripts/site-check.mjs",
+    "quality": "npm run build && npm run lint && npm run test:performance && npm run test:lael && npm run test:responsive && npm run test:site",
     "preview": "node scripts/serve.mjs",
     "lighthouse:ci": "lhci autorun --config=.lighthouserc.cjs"
   },

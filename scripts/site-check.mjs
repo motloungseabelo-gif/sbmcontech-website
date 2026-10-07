@@ -239,12 +239,13 @@ try {
   await cachedPage.evaluate(async () => {
     await caches.open('unrelated-app-cache');
     await caches.open('sbm-contech-v2');
+    await caches.open('sbm-contech-v3');
   });
   await cachedPage.goto(`${origin}/index.html`);
   await cachedPage.evaluate(() => navigator.serviceWorker.ready);
   await cachedPage.waitForFunction(() => Boolean(navigator.serviceWorker.controller));
   const keys = await cachedPage.evaluate(() => caches.keys());
-  check(keys.includes('sbm-contech-v3') && !keys.includes('sbm-contech-v2'), 'The new service worker did not replace the old SBM cache.');
+  check(keys.some(key => key.startsWith('sbm-contech-v4-')) && !keys.includes('sbm-contech-v2') && !keys.includes('sbm-contech-v3'), 'The new service worker did not replace the old SBM caches.');
   check(keys.includes('unrelated-app-cache'), 'The service worker removed an unrelated cache.');
   const worker = cachedContext.serviceWorkers()[0];
   await worker.evaluate(() => {

@@ -408,6 +408,8 @@ if(/whatsapp|message|lead|customer|booking|quote/.test(problem)&&!tags.includes(
 
 // Render a tiny launcher first. Load the full assistant only when a visitor opens it.
 (() => {
+  const release = new URL(document.currentScript?.src || location.href).searchParams.get('v');
+  const assetUrl = path => release ? `${path}?v=${encodeURIComponent(release)}` : path;
   function addLaelLauncher(){
     const preview=document.createElement('button');
     preview.type='button';
@@ -430,10 +432,10 @@ if(/whatsapp|message|lead|customer|booking|quote/.test(problem)&&!tags.includes(
         stylesheet.remove();
       };
       stylesheet.rel='stylesheet';
-      stylesheet.href='lael.min.css';
+      stylesheet.href=assetUrl('lael.min.css');
       stylesheet.addEventListener('load',()=>{
         const script=document.createElement('script');
-        script.src='lael.min.js';
+        script.src=assetUrl('lael.min.js');
         script.async=true;
         script.addEventListener('load',()=>{
           preview.remove();

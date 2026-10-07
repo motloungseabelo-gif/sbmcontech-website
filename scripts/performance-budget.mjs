@@ -13,7 +13,7 @@ for(const file of htmlFiles){
   if(file!=='insights.html'&&html.includes('href="insights.html"'))hasInsightsEntryPoint=true;
   assert(html.includes('width=device-width,initial-scale=1,viewport-fit=cover'),`${file}: responsive viewport metadata is missing.`);
   assert(!/fonts\.googleapis\.com|fonts\.gstatic\.com/.test(html),`${file}: external Google Fonts dependency remains.`);
-  assert(html.includes('href="style.min.css"'),`${file}: minified stylesheet is not referenced.`);
+  assert(/href="style\.min\.css(?:\?v=[a-f0-9]{12})?"/.test(html),`${file}: minified stylesheet is not referenced.`);
   const externalScripts=[...html.matchAll(/<script\b([^>]*)>/gi)]
     .map(match=>match[1])
     .filter(attributes=>/\bsrc=/.test(attributes));

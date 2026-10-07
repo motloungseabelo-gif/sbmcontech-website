@@ -107,6 +107,8 @@ Responsive checks cover all 15 root HTML pages at 320, 412, 768, 1024 and 1440 p
 
 Production builds recreate `dist/` from scratch, preventing obsolete files from remaining after a page or asset is removed.
 
+Each build gives the stylesheet, website script and lazy-loaded LAEL assets a shared content-derived release URL. The tracked root pages and offline cache use the same release, so returning visitors receive updated code even when an older service worker or browser cache is present. Service-worker installation refreshes its core assets and removes only previous SBM caches.
+
 ## Deployment
 
 The site is deployed through GitHub Pages from the `main` branch and uses the custom domain defined in `CNAME`. Changes should be made in a branch, validated by GitHub Actions, reviewed through a pull request, and merged only after all checks pass.

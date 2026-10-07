@@ -1,4 +1,5 @@
 import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { minify as minifyCss } from 'csso';
 import { minify as minifyHtml } from 'html-minifier-terser';
@@ -27,6 +28,15 @@ const laelJavaScript=await minifyJavaScript(await readFile(join(root,'lael.js'),
 });
 if(!laelJavaScript.code)throw new Error('Lael minification produced no output.');
 
+// A new URL bypasses both an older service worker and long-lived HTTP caches.
+// Include the lazy assistant so an assistant-only change also refreshes its loader.
+const release=createHash('sha256').update(minifiedCss).update(minifiedJavaScript.code)
+  .update(laelCss).update(laelJavaScript.code).digest('hex').slice(0,12);
+const serviceWorker=(await readFile(join(root,'sw.js'),'utf8'))
+  .replace(/^const CACHE_NAME='[^']+';/m,`const CACHE_NAME='sbm-contech-v4-${release}';`)
+  .replace(/'\.\/(style\.min\.css|script\.min\.js)(?:\?[^']*)?'/g,(_,file)=>`'./${file}?v=${release}'`);
+await writeFile(join(root,'sw.js'),serviceWorker);
+
 await writeFile(join(root,'style.min.css'),minifiedCss);
 await writeFile(join(root,'script.min.js'),minifiedJavaScript.code);
 await writeFile(join(root,'lael.min.css'),laelCss);
@@ -37,7 +47,11 @@ await mkdir(dist,{recursive:true});
 const entries=await readdir(root,{withFileTypes:true});
 const htmlFiles=entries.filter(entry=>entry.isFile()&&entry.name.endsWith('.html'));
 for(const entry of htmlFiles){
-  const source=await readFile(join(root,entry.name),'utf8');
+  const original=await readFile(join(root,entry.name),'utf8');
+  const source=original.replace(/\b(href|src)="(style\.min\.css|script\.min\.js)(?:\?[^"]*)?"/g,
+    (_,attribute,file)=>`${attribute}="${file}?v=${release}"`);
+  // GitHub Pages serves the tracked root files; keep them in sync with dist.
+  if(source!==original)await writeFile(join(root,entry.name),source);
   const output=await minifyHtml(source,{
     collapseWhitespace:true,
     conservativeCollapse:true,

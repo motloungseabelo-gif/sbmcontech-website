@@ -22,7 +22,7 @@ img{height:auto}
   .navbar{max-height:calc(100dvh - 96px);overflow-y:auto;overscroll-behavior:contain}
   .motion-ready main>section:not(.ticker):not(.section-active)>.motion-shell,
   .motion-ready main>section:not(.ticker):not(.section-active)>.shell{filter:none;opacity:.58;clip-path:none;transform:translate3d(0,12px,0)}
-  .motion-ready .reveal{filter:none;clip-path:none;transform:translate3d(0,16px,0);transition:opacity 520ms var(--ease-cine),transform 620ms var(--ease-cine)}
+  .motion-ready .reveal{translate:0 16px;transition:translate 620ms var(--ease-cine)}
   .scroll-3d .system-visual,
   .scroll-3d .arch-map,
   .scroll-3d .case-preview,

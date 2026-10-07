@@ -1,188 +1,409 @@
-(()=>{const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-function globalUI(){
-  const nav=$('#siteNav'),toggle=$('#navToggle');
-  const closeNav=()=>{nav?.classList.remove('show');toggle?.setAttribute('aria-expanded','false')};
-  if(toggle&&nav){
-    toggle.addEventListener('click',()=>{
-      const open=toggle.getAttribute('aria-expanded')!=='true';
-      toggle.setAttribute('aria-expanded',String(open));
-      nav.classList.toggle('show',open);
-    });
-    nav.addEventListener('click',e=>{if(e.target.closest('a'))closeNav()});
-    addEventListener('keydown',e=>{if(e.key==='Escape')closeNav()});
-    document.addEventListener('pointerdown',e=>{if(!e.target.closest('.site-header'))closeNav()},{passive:true});
-  }
+(() => {
+  const $ = selector => document.querySelector(selector);
+  const $$ = selector => [...document.querySelectorAll(selector)];
+  const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let disposeUI = () => {};
 
-  $$('[data-year]').forEach(el=>el.textContent=new Date().getFullYear());
-  const progress=$('#scrollProgress'),top=$('#backToTop');
-  let uiRaf=0;
-  const paintScrollUI=()=>{
-    uiRaf=0;
-    if(progress){const h=document.documentElement.scrollHeight-innerHeight;progress.style.width=(h?scrollY/h*100:0)+'%'}
-    if(top)top.classList.toggle('show',scrollY>420);
-  };
-  const onScroll=()=>{if(!uiRaf)uiRaf=requestAnimationFrame(paintScrollUI)};
-  paintScrollUI();
-  addEventListener('scroll',onScroll,{passive:true});
-  top?.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
-
-  const reveal=$$('.reveal');
-  if(!('IntersectionObserver'in window)||matchMedia('(prefers-reduced-motion: reduce)').matches){
-    reveal.forEach(x=>x.classList.add('show'));
-  }else{
-    const io=new IntersectionObserver(es=>es.forEach(e=>{
-      if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target)}
-    }),{threshold:.1});
-    reveal.forEach(x=>io.observe(x));
-  }
-
-  if('serviceWorker'in navigator&&/^https?:$/.test(location.protocol)){
-    const register=()=>navigator.serviceWorker.register('./sw.js').catch(()=>undefined);
-    if('requestIdleCallback'in window)requestIdleCallback(register,{timeout:3000});
-    else addEventListener('load',()=>setTimeout(register,0),{once:true});
-  }
-}
-function projectScope(){const form=$('#projectForm');if(!form)return;const steps=$$('.scope-step'),progress=$('#scopeProgress');let current=0;const show=i=>{current=Math.max(0,Math.min(steps.length-1,i));steps.forEach((s,j)=>s.classList.toggle('active',j===current));if(progress)progress.textContent=String(current+1).padStart(2,'0')+' / 04';if(current===3)generateBrief();$('#scopeCard')?.scrollIntoView({behavior:'smooth',block:'nearest'})};
-function validate(){const fields=[...steps[current].querySelectorAll('input,textarea,select')].filter(x=>x.required);for(const f of fields){if(f.type==='radio'){if(!steps[current].querySelector(`input[name="${f.name}"]:checked`)){f.reportValidity();return false}}else if(!f.checkValidity()){f.reportValidity();return false}}return true}
-$$('.scope-next').forEach(b=>b.addEventListener('click',()=>{if(validate())show(current+1)}));$$('.scope-back').forEach(b=>b.addEventListener('click',()=>show(current-1)));
-function generateBrief(){const data=new FormData(form),type=data.get('system_type')||'Not Sure',problem=(data.get('problem')||'').toLowerCase();let title='SYSTEM DISCOVERY',text='Begin with workflow discovery and architecture mapping before selecting the final technical approach.',tags=['Discovery','Architecture','Roadmap'];if(type==='Digital System'){title='CUSTOM DIGITAL SYSTEM';text='Recommended starting point: map users, workflows, data and permissions, then define a responsive platform or internal system architecture.';tags=['Platform','Dashboard','Data']}else if(type==='AI + Automation'){title='AUTOMATION WORKFLOW';text='Recommended starting point: identify repeatable hand-offs, information sources and decision points, then design the automation and human review layer.';tags=['Workflow','AI','Integration']}else if(type==='Connected Infrastructure'){title='CONNECTED CONTROL LAYER';text='Recommended starting point: audit devices, networking, access requirements and operational controls before defining the software and integration layer.';tags=['IoT','Control','Security']}
-if(/whatsapp|message|lead|customer|booking|quote/.test(problem)&&!tags.includes('CRM'))tags.push('CRM / Messaging');if(/excel|spreadsheet|manual|capture|admin/.test(problem)&&!tags.includes('Automation'))tags.push('Automation');$('#briefTitle').textContent=title;$('#briefText').textContent=text;$('#briefTags').innerHTML=tags.map(t=>`<span>${t}</span>`).join('');$('#generatedBrief').value=`${title} | ${text} | Focus: ${tags.join(', ')}`}
-form.addEventListener('submit',async e=>{e.preventDefault();if(!validate())return;const btn=$('#scopeSubmit'),status=$('#formStatus');btn.disabled=true;btn.textContent='TRANSMITTING...';status.textContent='';try{const res=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{Accept:'application/json'}});if(!res.ok)throw Error();location.href='thank-you.html'}catch{status.textContent='Transmission failed. Please use email or WhatsApp, or try again.';btn.disabled=false;btn.textContent='Send Project Brief ↗'}})}
-function lab(){const state={security:true,gate:false,garage:false,temp:22,lights:true,scene:'HOME'};const text=(id,v)=>{const e=$(id);if(e)e.textContent=v};const render=()=>{text('#securityStatus',state.security?'SECURE':'RELAXED');text('#securityBadge',state.security?'ARMED':'DISARMED');text('#gateStatus',state.gate?'OPEN':'CLOSED');text('#garageStatus',state.garage?'OPEN':'CLOSED');text('#tempValue',state.temp+'°');text('#lightBadge',state.lights?'ACTIVE':'STANDBY');$('#lightOrb')?.classList.toggle('off',!state.lights);text('#sceneBadge',state.scene);$$('[data-scene]').forEach(b=>b.classList.toggle('active',b.dataset.scene===state.scene))};$$('[data-lab]').forEach(b=>b.addEventListener('click',()=>{const a=b.dataset.lab;if(a==='security')state.security=!state.security;if(a==='gate')state.gate=!state.gate;if(a==='garage')state.garage=!state.garage;if(a==='tempUp')state.temp=Math.min(28,state.temp+1);if(a==='tempDown')state.temp=Math.max(16,state.temp-1);if(a==='lights')state.lights=!state.lights;if(a==='refresh'){text('#energyValue',(3.3+Math.random()*3).toFixed(1)+' kWh');text('#waterValue',Math.round(68+Math.random()*22)+'%')}render()}));$$('[data-scene]').forEach(b=>b.addEventListener('click',()=>{state.scene=b.dataset.scene;if(state.scene==='AWAY'){state.security=true;state.lights=false}else if(state.scene==='NIGHT'){state.security=true;state.lights=true;state.temp=20}else if(state.scene==='FOCUS'){state.lights=true;state.temp=21}else{state.security=true;state.lights=true;state.temp=22}render()}));render()}
-document.addEventListener('DOMContentLoaded',()=>{globalUI();projectScope();lab()})})();
-/* SBM Cinematic Motion System v2: mobile-first, dependency-free 3-D scroll simulator */
-(()=>{
-  const q=(s,c=document)=>c.querySelector(s), qa=(s,c=document)=>[...c.querySelectorAll(s)];
-  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
-  const fine=matchMedia('(pointer:fine)');
-  const mobile=matchMedia('(max-width: 860px)');
-  const saveData=Boolean(navigator.connection?.saveData);
-  const lowMemory=Number(navigator.deviceMemory||8)<=4;
-  const lite=saveData || lowMemory;
-  const activeDepth=new Set();
-  let raf=0, pointerX=0, pointerY=0, lastScrollY=scrollY;
-
-  function preparePortraits(){
-    qa('.leader-photo').forEach(frame=>{
-      const img=q('img',frame); if(!img||frame.dataset.depthReady)return;
-      frame.dataset.depthReady='1';
-      const bg=img.cloneNode(true); bg.alt=''; bg.setAttribute('aria-hidden','true'); bg.className='portrait-background';
-      img.className='portrait-foreground';
-      frame.insertBefore(bg,img);
-    });
-  }
-
-  function sectionMasks(){
-    const sections=qa('main > section');
-    if(reduce.matches || !('IntersectionObserver' in window)){
-      sections.forEach(s=>s.classList.add('section-active'));
-      return;
+  function globalUI() {
+    const controller = new AbortController();
+    const { signal } = controller;
+    const nav = $('#siteNav'), toggle = $('#navToggle'), header = $('#siteHeader');
+    const closeNav = () => {
+      nav?.classList.remove('show');
+      toggle?.setAttribute('aria-expanded', 'false');
+    };
+    const progress = $('#scrollProgress'), top = $('#backToTop');
+    let uiRaf = 0, idle = 0, timer = 0;
+    const paintScrollUI = () => {
+      uiRaf = 0;
+      const height = document.documentElement.scrollHeight - innerHeight;
+      if (progress) progress.style.width = `${Math.max(0, Math.min(100, height > 0 ? scrollY / height * 100 : 0))}%`;
+      top?.classList.toggle('show', scrollY > 420);
+      if (header) {
+        const box = header.getBoundingClientRect();
+        document.documentElement.style.setProperty('--site-header-height', `${box.height}px`);
+        if (nav?.classList.contains('show')) nav.style.maxHeight = `${Math.max(0, innerHeight - box.bottom)}px`;
+      }
+    };
+    const queue = () => { if (!uiRaf) uiRaf = requestAnimationFrame(paintScrollUI); };
+    if (toggle && nav) {
+      toggle.addEventListener('click', () => {
+        const open = toggle.getAttribute('aria-expanded') !== 'true';
+        toggle.setAttribute('aria-expanded', String(open));
+        nav.classList.toggle('show', open);
+        queue();
+      }, { signal });
+      nav.addEventListener('click', event => { if (event.target.closest('a')) closeNav(); }, { signal });
+      addEventListener('keydown', event => {
+        if (event.key === 'Escape' && nav.classList.contains('show')) { closeNav(); toggle.focus(); }
+      }, { signal });
+      document.addEventListener('pointerdown', event => { if (!event.target.closest('.site-header')) closeNav(); }, { passive: true, signal });
+      document.addEventListener('focusin', event => { if (!event.target.closest('.site-header')) closeNav(); }, { signal });
+      const desktop = matchMedia('(min-width: 861px)');
+      desktop.addEventListener('change', closeNav, { signal });
     }
-    const io=new IntersectionObserver(entries=>entries.forEach(entry=>{
-      if(entry.isIntersecting)entry.target.classList.add('section-active');
-    }),{rootMargin:'-6% 0px -8%',threshold:.06});
-    sections.forEach(s=>io.observe(s));
-    q('main > section')?.classList.add('section-active');
+    $$('[data-year]').forEach(element => { element.textContent = new Date().getFullYear(); });
+    paintScrollUI();
+    addEventListener('scroll', queue, { passive: true, signal });
+    addEventListener('resize', queue, { passive: true, signal });
+    addEventListener('load', queue, { capture: true, signal });
+    top?.addEventListener('click', () => scrollTo({ top: 0, behavior: reducedMotion() ? 'instant' : 'smooth' }), { signal });
+    const observer = 'ResizeObserver' in window ? new ResizeObserver(queue) : null;
+    if (header) observer?.observe(header);
+    observer?.observe(document.documentElement);
+    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+      const register = () => navigator.serviceWorker.register('./sw.js').catch(() => undefined);
+      if ('requestIdleCallback' in window) idle = requestIdleCallback(register, { timeout: 3000 });
+      else timer = setTimeout(register, 0);
+    }
+    return () => {
+      controller.abort();
+      observer?.disconnect();
+      cancelAnimationFrame(uiRaf);
+      if (idle) cancelIdleCallback(idle);
+      clearTimeout(timer);
+      closeNav();
+    };
   }
 
-  function scroll3D(){
-    if(reduce.matches)return;
-    const targets=qa('.hero,.page-hero,.system-visual,.arch-map,.case-preview,.brand-preview,.leader-photo,.vision-band,.work-screen,.sbm-corporate-park');
-    if(!targets.length)return;
+  function projectScope() {
+    const form = $('#projectForm');
+    if (!form) return;
+    const steps = $$('.scope-step'), progress = $('#scopeProgress'), button = $('#scopeSubmit'), status = $('#formStatus');
+    let current = 0, sending = false, submitted = false, request;
+    // Validate the visible step ourselves; native implicit submission would try to focus hidden fields.
+    form.noValidate = true;
+    const show = index => {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      steps.forEach((step, number) => { step.classList.toggle('active', number === current); });
+      if (progress) progress.textContent = `${String(current + 1).padStart(2, '0')} / ${String(steps.length).padStart(2, '0')}`;
+      if (current === steps.length - 1) generateBrief();
+      const heading = steps[current].querySelector('h2');
+      heading?.setAttribute('tabindex', '-1');
+      heading?.focus({ preventScroll: true });
+      $('#scopeCard')?.scrollIntoView({ behavior: reducedMotion() ? 'instant' : 'smooth', block: 'nearest' });
+    };
+    function validate(index = current) {
+      const fields = [...steps[index].querySelectorAll('input,textarea,select')].filter(field => field.required && !field.disabled);
+      for (const field of fields) {
+        if (field.type !== 'radio' && !field.value.trim()) field.setCustomValidity('Please complete this field.');
+        if (!field.checkValidity()) {
+          if (index !== current) show(index);
+          field.focus();
+          field.reportValidity();
+          return false;
+        }
+      }
+      return true;
+    }
+    form.addEventListener('input', event => { event.target.setCustomValidity?.(''); });
+    form.addEventListener('change', event => { event.target.setCustomValidity?.(''); });
+    const advance = () => { if (!sending && !submitted && validate()) show(current + 1); };
+    $$('.scope-next').forEach(next => next.addEventListener('click', advance));
+    $$('.scope-back').forEach(back => back.addEventListener('click', () => { if (!sending && !submitted) show(current - 1); }));
+    form.addEventListener('keydown', event => {
+      if (event.key === 'Enter' && !event.isComposing && event.target.matches('input') && current < steps.length - 1) {
+        event.preventDefault();
+        advance();
+      }
+    });
 
-    // Observe once; only visible/near-visible layers enter the animation loop.
-    if('IntersectionObserver' in window){
-      const depthIO=new IntersectionObserver(entries=>entries.forEach(entry=>{
-        if(entry.isIntersecting){activeDepth.add(entry.target);entry.target.classList.add('depth-active')}
-        else{activeDepth.delete(entry.target);entry.target.classList.remove('depth-active')}
-      }),{rootMargin:'25% 0px 25%',threshold:0});
-      targets.forEach(el=>depthIO.observe(el));
-    }else targets.forEach(el=>activeDepth.add(el));
+    function generateBrief(){const data=new FormData(form),type=data.get('system_type')||'Not Sure',problem=(data.get('problem')||'').toLowerCase();let title='SYSTEM DISCOVERY',text='Begin with workflow discovery and architecture mapping before selecting the final technical approach.',tags=['Discovery','Architecture','Roadmap'];if(type==='Digital System'){title='CUSTOM DIGITAL SYSTEM';text='Recommended starting point: map users, workflows, data and permissions, then define a responsive platform or internal system architecture.';tags=['Platform','Dashboard','Data']}else if(type==='AI + Automation'){title='AUTOMATION WORKFLOW';text='Recommended starting point: identify repeatable hand-offs, information sources and decision points, then design the automation and human review layer.';tags=['Workflow','AI','Integration']}else if(type==='Connected Infrastructure'){title='CONNECTED CONTROL LAYER';text='Recommended starting point: audit devices, networking, access requirements and operational controls before defining the software and integration layer.';tags=['IoT','Control','Security']}
+if(/whatsapp|message|lead|customer|booking|quote/.test(problem)&&!tags.includes('CRM'))tags.push('CRM / Messaging');if(/excel|spreadsheet|manual|capture|admin/.test(problem)&&!tags.includes('Automation'))tags.push('Automation');$('#briefTitle').textContent=title;$('#briefText').textContent=text;$('#briefTags').innerHTML=tags.map(t=>`<span>${t}</span>`).join('');$('#generatedBrief').value=`${title} | ${text} | Focus: ${tags.join(', ')}`}
 
-    const paint=()=>{
-      raf=0;
-      const vh=innerHeight||1;
-      const currentY=scrollY;
-      const velocity=Math.max(-28,Math.min(28,currentY-lastScrollY));
-      lastScrollY=currentY;
-      const intensity=mobile.matches ? .48 : (lite ? .68 : 1);
-      const range=mobile.matches ? 12 : 22;
 
-      const maxScroll=Math.max(1,document.documentElement.scrollHeight-vh);
-      const measurements=[];
-      activeDepth.forEach(el=>{
-        const r=el.getBoundingClientRect();
-        const p=Math.max(-1.15,Math.min(1.15,(r.top+r.height*.5-vh*.5)/vh));
-        const y=Math.max(-range,Math.min(range,-p*range))*intensity;
-        const x=pointerX*(mobile.matches?0:7)*intensity;
-        const tilt=(p*(mobile.matches?1.15:1.8))*intensity;
-        measurements.push({el,y,x,tilt});
-      });
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (sending || submitted) return;
+      if (current < steps.length - 1) { advance(); return; }
+      for (let index = 0; index < steps.length; index++) { if (!validate(index)) return; }
+      const data = new FormData(form);
+      request = new AbortController();
+      const timer = setTimeout(() => request?.abort(), 20000);
+      sending = true;
+      form.setAttribute('aria-busy', 'true');
+      const buttons = [...form.querySelectorAll('button')];
+      buttons.forEach(control => { control.disabled = true; });
+      button.textContent = 'TRANSMITTING...';
+      status.textContent = 'Transmitting your project brief…';
+      try {
+        const response = await fetch(form.action, { method: 'POST', body: data, headers: { Accept: 'application/json' }, signal: request.signal });
+        if (!response.ok) throw new Error('Submission unavailable');
+        submitted = true;
+        location.href = 'thank-you.html';
+      } catch {
+        status.textContent = 'Transmission failed. Please use email or WhatsApp, or try again.';
+      } finally {
+        clearTimeout(timer);
+        request = null;
+        sending = false;
+        form.removeAttribute('aria-busy');
+        if (!submitted) {
+          buttons.forEach(control => { control.disabled = false; });
+          button.textContent = 'Send Project Brief ↗';
+        }
+      }
+    });
+    addEventListener('pagehide', () => request?.abort());
+    addEventListener('pageshow', event => {
+      if (!event.persisted) return;
+      submitted = false;
+      form.querySelectorAll('button').forEach(control => { control.disabled = false; });
+      button.textContent = 'Send Project Brief ↗';
+    });
+  }
 
-      document.documentElement.style.setProperty('--scroll-velocity',`${(velocity*.035).toFixed(3)}deg`);
-      document.documentElement.style.setProperty('--scroll-page',`${Math.min(1,currentY/maxScroll).toFixed(4)}`);
-      measurements.forEach(({el,y,x,tilt})=>{
-        el.style.setProperty('--depth-y',`${y.toFixed(2)}px`);
-        el.style.setProperty('--depth-y-inv',`${(-y).toFixed(2)}px`);
-        el.style.setProperty('--depth-y-soft',`${(y*.45).toFixed(2)}px`);
-        el.style.setProperty('--depth-y-inv-soft',`${(-y*.45).toFixed(2)}px`);
-        el.style.setProperty('--depth-y-subtle',`${(y*.25).toFixed(2)}px`);
-        el.style.setProperty('--depth-y-inv-subtle',`${(-y*.32).toFixed(2)}px`);
-        el.style.setProperty('--depth-x',`${x.toFixed(2)}px`);
-        el.style.setProperty('--depth-x-inv',`${(-x).toFixed(2)}px`);
-        el.style.setProperty('--depth-r',`${tilt.toFixed(3)}deg`);
+  function lab() {
+    const state = { security: true, gate: false, garage: false, temp: 22, lights: true, scene: 'HOME', energy: 4.8, water: 78 };
+    const energyMeter = $('#energyValue')?.nextElementSibling;
+    // Retain the scale of the existing prototype's initial reading and bar.
+    const energyScale = state.energy / (parseFloat(energyMeter?.style.getPropertyValue('--meter') || '64') / 100);
+    const text = (selector, value) => { const element = $(selector); if (element) element.textContent = value; };
+    const render = () => {
+      text('#securityStatus', state.security ? 'SECURE' : 'RELAXED');
+      text('#securityBadge', state.security ? 'ARMED' : 'DISARMED');
+      text('#gateStatus', state.gate ? 'OPEN' : 'CLOSED');
+      text('#garageStatus', state.garage ? 'OPEN' : 'CLOSED');
+      text('#tempValue', `${state.temp}°`);
+      text('#lightBadge', state.lights ? 'ACTIVE' : 'STANDBY');
+      $('#lightOrb')?.classList.toggle('off', !state.lights);
+      text('#sceneBadge', state.scene);
+      text('#energyValue', `${state.energy.toFixed(1)} kWh`);
+      text('#waterValue', `${state.water}%`);
+      energyMeter?.style.setProperty('--meter', `${Math.min(100, state.energy / energyScale * 100)}%`);
+      $('#waterValue')?.nextElementSibling.style.setProperty('--meter', `${state.water}%`);
+      for (const action of ['security', 'gate', 'garage', 'lights']) $(`[data-lab="${action}"]`)?.setAttribute('aria-pressed', String(state[action]));
+      $$('[data-scene]').forEach(control => {
+        const selected = control.dataset.scene === state.scene;
+        control.classList.toggle('active', selected);
+        control.setAttribute('aria-pressed', String(selected));
       });
     };
-    const queue=()=>{if(!raf)raf=requestAnimationFrame(paint)};
-    addEventListener('scroll',queue,{passive:true});
-    addEventListener('resize',queue,{passive:true});
+    $$('[data-lab]').forEach(control => control.addEventListener('click', () => {
+      const action = control.dataset.lab;
+      if (['security', 'gate', 'garage', 'lights'].includes(action)) state[action] = !state[action];
+      if (action === 'tempUp') state.temp = Math.min(28, state.temp + 1);
+      if (action === 'tempDown') state.temp = Math.max(16, state.temp - 1);
+      if (action === 'refresh') { state.energy = Number((3.3 + Math.random() * 3).toFixed(1)); state.water = Math.round(68 + Math.random() * 22); }
+      render();
+    }));
+    $$('[data-scene]').forEach(control => control.addEventListener('click', () => {
+      state.scene = control.dataset.scene;
+      if (state.scene === 'AWAY') { state.security = true; state.lights = false; }
+      else if (state.scene === 'NIGHT') { state.security = true; state.lights = true; state.temp = 20; }
+      else if (state.scene === 'FOCUS') { state.lights = true; state.temp = 21; }
+      else { state.security = true; state.lights = true; state.temp = 22; }
+      render();
+    }));
+    render();
   }
 
-  function pointerDepth(){
-    if(!fine.matches||reduce.matches||mobile.matches||lite)return;
-    let pointerRaf=0;
-    addEventListener('pointermove',e=>{
-      pointerX=e.clientX/innerWidth-.5; pointerY=e.clientY/innerHeight-.5;
-      if(pointerRaf)return;
-      pointerRaf=requestAnimationFrame(()=>{
-        pointerRaf=0;
-        document.documentElement.style.setProperty('--pointer-x',`${(pointerX*7).toFixed(2)}px`);
-        document.documentElement.style.setProperty('--pointer-y',`${(pointerY*7).toFixed(2)}px`);
-      });
-    },{passive:true});
-    qa('.system-visual,.arch-map,.case-preview,.work-card,.leader-card').forEach(card=>{
-      card.addEventListener('pointermove',e=>{
-        const r=card.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
-        card.style.setProperty('--tilt-y',`${(x*4.2).toFixed(2)}deg`);
-        card.style.setProperty('--tilt-x',`${(-y*3.6).toFixed(2)}deg`);
-      },{passive:true});
-      card.addEventListener('pointerleave',()=>{card.style.setProperty('--tilt-y','0deg');card.style.setProperty('--tilt-x','0deg')});
+  document.addEventListener('DOMContentLoaded', () => { disposeUI = globalUI(); projectScope(); lab(); }, { once: true });
+  addEventListener('pagehide', () => disposeUI());
+  addEventListener('pageshow', event => { if (event.persisted) disposeUI = globalUI(); });
+})();
+/* SBM Cinematic Motion: position-based parallax with readable scroll reveals. */
+(() => {
+  const q = (selector, context = document) => context.querySelector(selector);
+  const qa = (selector, context = document) => [...context.querySelectorAll(selector)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const fine = matchMedia('(pointer: fine)');
+  const mobile = matchMedia('(max-width: 860px)');
+  const lite = Boolean(navigator.connection?.saveData) || Number(navigator.deviceMemory || 8) <= 4;
+  let pointerX = 0, pointerY = 0, dispose = () => {}, started = false;
+
+  function preparePortraits() {
+    qa('.leader-photo').forEach(frame => {
+      const image = q('img', frame);
+      if (!image || frame.dataset.depthReady) return;
+      frame.dataset.depthReady = '1';
+      const background = image.cloneNode(true);
+      background.alt = '';
+      background.setAttribute('aria-hidden', 'true');
+      background.className = 'portrait-background';
+      image.className = 'portrait-foreground';
+      frame.insertBefore(background, image);
     });
   }
 
-  function pageWipe(){
-    const wipe=document.createElement('div'); wipe.className='sbm-page-wipe'; wipe.setAttribute('aria-hidden','true'); document.body.appendChild(wipe);
-    if(reduce.matches || mobile.matches || lite)return;
-    qa('a[href]').forEach(a=>a.addEventListener('click',e=>{
-      if(e.defaultPrevented||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||a.target==='_blank'||a.hasAttribute('download'))return;
-      let u; try{u=new URL(a.href,location.href)}catch{return}
-      if(u.origin!==location.origin||(u.pathname===location.pathname&&u.hash))return;
-      if(!/\.html$|\/$/.test(u.pathname))return;
-      e.preventDefault(); document.body.classList.add('page-leaving');
-      setTimeout(()=>{location.href=u.href},300);
-    }));
+  function sectionReveals() {
+    const sections = qa('main > section'), reveals = qa('.reveal');
+    const activate = element => element.classList.add(element.classList.contains('reveal') ? 'show' : 'section-active');
+    const targets = [...sections, ...reveals];
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      targets.forEach(activate);
+      return () => {};
+    }
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => { if (entry.isIntersecting) { activate(entry.target); observer.unobserve(entry.target); } });
+    }, { rootMargin: '250px 0px', threshold: 0 });
+    targets.forEach(element => {
+      const box = element.getBoundingClientRect();
+      if (box.top <= innerHeight + 250 && box.bottom >= -250) activate(element);
+      else observer.observe(element);
+    });
+    return () => observer.disconnect();
   }
 
-  function boot(){
-    document.body.classList.add('motion-ready','scroll-3d');
-    if(lite)document.body.classList.add('motion-lite');
-    preparePortraits(); sectionMasks(); scroll3D(); pointerDepth(); pageWipe();
+  function scroll3D() {
+    const targets = qa('.hero,.page-hero,.system-visual,.arch-map,.case-preview,.brand-preview,.leader-photo,.vision-band,.work-screen,.sbm-corporate-park');
+    if (reduce.matches || !targets.length) return { queue: () => {}, cleanup: () => {} };
+    const controller = new AbortController(), { signal } = controller;
+    const geometry = new Map();
+    let raf = 0, settle = 0, dirty = true, alive = true, previousY = scrollY, previousTime = performance.now();
+    const depthProperties = ['--depth-y', '--depth-y-inv', '--depth-y-soft', '--depth-y-inv-soft', '--depth-y-subtle', '--depth-y-inv-subtle', '--depth-x', '--depth-x-inv', '--depth-r'];
+    const measure = () => {
+      targets.forEach(element => {
+        // Layout offsets exclude the transforms this effect writes, avoiding measurement feedback.
+        let top = 0, parent = element;
+        while (parent) { top += parent.offsetTop; parent = parent.offsetParent; }
+        geometry.set(element, { top, height: element.offsetHeight });
+      });
+      dirty = false;
+    };
+    const paint = time => {
+      raf = 0;
+      if (!alive) return;
+      if (dirty) measure();
+      const height = innerHeight || 1, currentY = scrollY;
+      const velocity = Math.max(-28, Math.min(28, (currentY - previousY) * 16 / Math.max(16, time - previousTime)));
+      previousY = currentY;
+      previousTime = time;
+      const intensity = mobile.matches ? .48 : lite ? .68 : 1;
+      const range = mobile.matches ? 12 : 22;
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - height);
+      const updates = targets.map(element => {
+        const box = geometry.get(element);
+        const active = box.top + box.height >= currentY - height * .25 && box.top <= currentY + height * 1.25;
+        const position = Math.max(-1.15, Math.min(1.15, (box.top - currentY + box.height * .5 - height * .5) / height));
+        return { element, active, y: Math.max(-range, Math.min(range, -position * range)) * intensity, x: pointerX * (mobile.matches ? 0 : 7) * intensity, tilt: position * (mobile.matches ? 1.15 : 1.8) * intensity };
+      });
+      document.documentElement.style.setProperty('--scroll-velocity', `${(velocity * .035).toFixed(3)}deg`);
+      document.documentElement.style.setProperty('--scroll-page', `${Math.max(0, Math.min(1, currentY / maxScroll)).toFixed(4)}`);
+      updates.forEach(({ element, active, y, x, tilt }) => {
+        element.classList.toggle('depth-active', active);
+        if (!active) return;
+        const values = [y, -y, y * .45, -y * .45, y * .25, -y * .32, x, -x];
+        values.forEach((value, index) => element.style.setProperty(depthProperties[index], `${value.toFixed(2)}px`));
+        element.style.setProperty('--depth-r', `${tilt.toFixed(3)}deg`);
+      });
+    };
+    const queue = () => { if (alive && !raf) raf = requestAnimationFrame(paint); };
+    const onScroll = () => {
+      queue();
+      clearTimeout(settle);
+      settle = setTimeout(queue, 120); // Finish the velocity accent at zero when scrolling stops.
+    };
+    const layoutChanged = () => { dirty = true; queue(); };
+    addEventListener('scroll', onScroll, { passive: true, signal });
+    addEventListener('resize', layoutChanged, { passive: true, signal });
+    addEventListener('orientationchange', layoutChanged, { signal });
+    addEventListener('load', layoutChanged, { capture: true, signal });
+    const observer = 'ResizeObserver' in window ? new ResizeObserver(layoutChanged) : null;
+    observer?.observe(document.documentElement);
+    targets.forEach(element => observer?.observe(element));
+    document.fonts?.ready.then(() => { if (alive) layoutChanged(); });
+    queue(); // Includes restored scroll positions and direct fragment navigation before boot.
+    return { queue, cleanup: () => {
+      alive = false;
+      controller.abort();
+      observer?.disconnect();
+      cancelAnimationFrame(raf);
+      clearTimeout(settle);
+      targets.forEach(element => {
+        element.classList.remove('depth-active');
+        depthProperties.forEach(property => element.style.removeProperty(property));
+      });
+      document.documentElement.style.setProperty('--scroll-velocity', '0deg');
+      document.documentElement.style.removeProperty('--scroll-page');
+    } };
   }
-  function scheduleBoot(){
-    if('requestIdleCallback'in window)requestIdleCallback(boot,{timeout:1200});
-    else setTimeout(boot,0);
+
+  function pointerDepth(queueDepth) {
+    if (!fine.matches || reduce.matches || mobile.matches || lite) return () => {};
+    const controller = new AbortController(), { signal } = controller;
+    let raf = 0, activeCard, clientX = 0, clientY = 0;
+    const cards = qa('.system-visual,.arch-map,.case-preview,.work-card,.leader-card');
+    addEventListener('pointermove', event => {
+      pointerX = event.clientX / innerWidth - .5;
+      pointerY = event.clientY / innerHeight - .5;
+      clientX = event.clientX;
+      clientY = event.clientY;
+      activeCard = event.target.closest?.('.system-visual,.arch-map,.case-preview,.work-card,.leader-card');
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const box = activeCard?.getBoundingClientRect();
+        document.documentElement.style.setProperty('--pointer-x', `${(pointerX * 7).toFixed(2)}px`);
+        document.documentElement.style.setProperty('--pointer-y', `${(pointerY * 7).toFixed(2)}px`);
+        if (box?.width && box.height) {
+          activeCard.style.setProperty('--tilt-y', `${((clientX - box.left) / box.width * 4.2 - 2.1).toFixed(2)}deg`);
+          activeCard.style.setProperty('--tilt-x', `${(-((clientY - box.top) / box.height - .5) * 3.6).toFixed(2)}deg`);
+        }
+        queueDepth();
+      });
+    }, { passive: true, signal });
+    cards.forEach(card => card.addEventListener('pointerleave', () => {
+      card.style.setProperty('--tilt-y', '0deg');
+      card.style.setProperty('--tilt-x', '0deg');
+      if (activeCard === card) activeCard = null;
+    }, { signal }));
+    return () => {
+      controller.abort();
+      cancelAnimationFrame(raf);
+      pointerX = pointerY = 0;
+      ['--pointer-x', '--pointer-y'].forEach(property => document.documentElement.style.removeProperty(property));
+      cards.forEach(card => ['--tilt-x', '--tilt-y'].forEach(property => card.style.removeProperty(property)));
+    };
   }
-  document.readyState==='complete'?scheduleBoot():addEventListener('load',scheduleBoot,{once:true});
+
+  function pageWipe() {
+    document.body.classList.remove('page-leaving');
+    let wipe = q('.sbm-page-wipe');
+    if (!wipe) {
+      wipe = document.createElement('div');
+      wipe.className = 'sbm-page-wipe';
+      wipe.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(wipe);
+    }
+    if (reduce.matches || mobile.matches || lite) return () => {};
+    const controller = new AbortController();
+    let navigation = 0, reset = 0;
+    document.addEventListener('click', event => {
+      const anchor = event.target.closest('a[href]');
+      if (!anchor || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || (anchor.target && anchor.target !== '_self') || anchor.hasAttribute('download')) return;
+      let url;
+      try { url = new URL(anchor.href, location.href); } catch { return; }
+      if (url.origin !== location.origin || !/^https?:$/.test(url.protocol) || (url.pathname === location.pathname && url.hash) || !/\.html$|\/$/.test(url.pathname)) return;
+      event.preventDefault();
+      if (navigation) return;
+      document.body.classList.add('page-leaving');
+      navigation = setTimeout(() => { location.href = url.href; }, 300);
+      reset = setTimeout(() => { navigation = 0; document.body.classList.remove('page-leaving'); }, 1500);
+    }, { signal: controller.signal });
+    return () => {
+      controller.abort();
+      clearTimeout(navigation);
+      clearTimeout(reset);
+      document.body.classList.remove('page-leaving');
+    };
+  }
+
+  function boot() {
+    dispose();
+    document.body.classList.add('motion-ready');
+    document.body.classList.toggle('scroll-3d', !reduce.matches);
+    document.body.classList.toggle('motion-lite', lite);
+    preparePortraits();
+    const stopReveals = sectionReveals(), depth = scroll3D(), stopPointer = pointerDepth(depth.queue), stopWipe = pageWipe();
+    dispose = () => { stopReveals(); stopPointer(); depth.cleanup(); stopWipe(); };
+    started = true;
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+  else boot();
+  addEventListener('pagehide', () => { dispose(); started = false; });
+  addEventListener('pageshow', event => { if (event.persisted) boot(); });
+  [reduce, fine, mobile].forEach(query => query.addEventListener('change', () => { if (started) boot(); }));
 })();
 
 // Render a tiny launcher first. Load the full assistant only when a visitor opens it.
@@ -191,7 +412,7 @@ document.addEventListener('DOMContentLoaded',()=>{globalUI();projectScope();lab(
     const preview=document.createElement('button');
     preview.type='button';
     preview.className='lael-preview';
-    preview.setAttribute('aria-label','Open Lael assistant');
+    preview.setAttribute('aria-label','Open LAEL assistant');
     preview.innerHTML='<span class="lael-preview-orb" aria-hidden="true"></span><span><b>ASK LAEL</b><small>SBM ASSISTANT</small></span>';
     document.body.appendChild(preview);
     document.body.classList.add('lael-preview-ready');
@@ -230,5 +451,5 @@ document.addEventListener('DOMContentLoaded',()=>{globalUI();projectScope();lab(
     if('requestIdleCallback'in window)requestIdleCallback(addLaelLauncher,{timeout:1200});
     else setTimeout(addLaelLauncher,300);
   }
-  document.readyState==='complete'?scheduleLauncher():addEventListener('load',scheduleLauncher,{once:true});
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',scheduleLauncher,{once:true}):scheduleLauncher();
 })();

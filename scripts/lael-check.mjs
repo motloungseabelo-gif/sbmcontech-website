@@ -114,6 +114,14 @@ try {
   }
   check((await page.locator('.lael-message-label').allTextContents()).join(',') === 'LAEL,YOU,LAEL,YOU,LAEL,YOU,LAEL,YOU,LAEL', 'Messages were reordered or duplicated.');
 
+  replies.push({ text: 'Contact **the SBM team** through [the contact form](contact.html). Email **sbmcontechindustries@gmail.com** or call __+27 64 026 2150__.' });
+  const formatted = await send('How do I contact SBM?');
+  const displayed = await formatted.innerText();
+  check(displayed.includes('Contact the SBM team') && displayed.includes('sbmcontechindustries@gmail.com') && displayed.includes('+27 64 026 2150'), 'Markdown emphasis lost the contact details.');
+  check(!/\*\*|__/.test(displayed), 'Raw emphasis delimiters appeared in the contact reply.');
+  check(await formatted.locator('a').first().getAttribute('href') === 'contact.html', 'Emphasis cleanup changed the contact destination.');
+  check(await spoken() === 'You can reach us through our contact page.', 'Emphasis cleanup changed natural contact speech.');
+
   const formats = [
     ['Plain relative', 'Use contact.html?source=plain#scope.', 'contact.html?source=plain#scope', 'Contact page'],
     ['Root relative', 'Use /contact.html#scope.', '/contact.html#scope', 'Contact page'],

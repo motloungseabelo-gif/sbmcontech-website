@@ -107,7 +107,11 @@
   // template; the live conversation only receives text nodes and safe anchors.
   function normalizeReply(message, action, options = {}) {
     const parts = [];
-    const text = value => { if (value) parts.push({ text: value }); };
+    const text = value => {
+      // The model may emphasize contact details with Markdown. Keep the words
+      // readable without displaying formatting delimiters or inserting HTML.
+      if (value) parts.push({ text: value.replace(/\*\*([^*]+)\*\*|__([^_]+)__/g, (_, bold, emphasis) => bold ?? emphasis) });
+    };
     const link = (href, label) => {
       const safe = safeLink(href, label);
       if (safe) parts.push(safe);

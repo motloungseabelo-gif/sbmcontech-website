@@ -1,9 +1,9 @@
-const CACHE_NAME='sbm-contech-v4-58aaec1a3e6e';
+const CACHE_NAME='sbm-contech-v4-0c3693d19df2';
 const CORE_ASSETS=[
   './',
   './index.html',
-  './style.min.css?v=58aaec1a3e6e',
-  './script.min.js?v=58aaec1a3e6e',
+  './style.min.css?v=0c3693d19df2',
+  './script.min.js?v=0c3693d19df2',
   './fonts/dm-sans-latin.woff2',
   './fonts/space-grotesk-latin.woff2',
   './images/logo-96.webp',

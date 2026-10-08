@@ -11,7 +11,7 @@ This refinement preserves SBM ConTech Industries' existing navy, bronze, cream a
 - The four-step enquiry form still submits to the existing Formspree endpoint. No live enquiry was sent during testing.
 - LAEL still lazy-loads and uses the configured Cloudflare Worker, with its existing local guide fallback, safe link renderer and optional voice controls. Voice remains off by default and microphone access remains explicit.
 - The Worker and its configuration are unchanged. Server-side credential handling, origin checks, input/output bounds, rate limiting and request timeout remain. No PHP, database or database credentials are part of this architecture.
-- No new dependency was added. Node.js 24 LTS is now used in CI, and the package engine floor matches the existing tooling requirements. Existing pinned development dependencies are retained.
+- No new direct dependency was added. Node.js 24 LTS is now used in CI, and the package engine floor matches the existing tooling requirements. Pinned direct development dependencies are retained; compatible transitive security patches update the lockfile.
 
 ## Design and rendering
 
@@ -59,8 +59,12 @@ Browser regressions cover rapid scroll jumps and reversals, wheel/keyboard/scrol
 
 These are lab measurements using Chromium, not field Core Web Vitals or physical Android/iPhone measurements. Performance scores vary with the test machine and run. Form delivery is covered with controlled responses rather than an unsolicited real enquiry. Speech tests inspect browser utterances and lifecycle; physical audio playback and OS-specific voices require device verification. Schema improves content interpretation but does not guarantee search or AI-answer placement.
 
+The development dependency audit initially reported 32 advisories, including one critical advisory. Compatible lockfile patches remove ten findings, including the critical advisory. Twenty-two findings remain in development-only tooling (two low, four moderate and sixteen high), primarily Lighthouse CI and glob/editor dependencies. The audit's forced remediation proposes incompatible tool downgrades; those are not applied to this release. None of these npm packages is served as a production dependency by the static site or the dependency-free Worker. Reassess the development tools when their upstream packages provide compatible fixes; use trusted repository inputs for these tools.
+
 ## Deployment and recovery
 
 The release uses a dedicated branch, pull request and passing GitHub Actions checks before merging into the existing `main` deployment path. GitHub Pages and the Cloudflare integration retain their existing configuration. Verify the deployed page's versioned assets, navigation, FAQ, enquiry validation and LAEL after hosting completes.
+
+Cloudflare's branch-preview check also fails on the untouched checkpoint commit and the previous feature branch, while the previous `main` production build succeeded. GitHub exposes no error text for that preview check; its detailed logs require Cloudflare account sign-in. The unchanged Worker configuration is retained. Treat the preview result as a pre-existing integration issue, and verify the production Worker build and live chat after merging.
 
 The pre-release commit is `94350aaae6ce94cf239bd8edc7329bc660a82adc`, preserved as `checkpoint/sbm-before-premium-20261008`. To roll back, revert the merged release commit through a reviewed change and let the existing deployment run. A rollback does not require rewriting branch history or moving the custom domain.

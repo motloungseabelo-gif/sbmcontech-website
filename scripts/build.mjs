@@ -4,10 +4,11 @@ import { join } from 'node:path';
 import { minify as minifyCss } from 'csso';
 import { minify as minifyHtml } from 'html-minifier-terser';
 import { minify as minifyJavaScript } from 'terser';
+import { enrichMetadata } from './seo.mjs';
 
 const root=process.cwd();
 const dist=join(root,'dist');
-const cssSources=[1,2,3,4,5].map(number=>join(root,'styles',`sbm-${number}.css`));
+const cssSources=[1,2,3,4,5,6].map(number=>join(root,'styles',`sbm-${number}.css`));
 
 const css=(await Promise.all(cssSources.map(file=>readFile(file,'utf8')))).join('\n').replaceAll('../fonts/','fonts/');
 const minifiedCss=minifyCss(css,{restructure:true}).css;
@@ -48,8 +49,8 @@ const entries=await readdir(root,{withFileTypes:true});
 const htmlFiles=entries.filter(entry=>entry.isFile()&&entry.name.endsWith('.html'));
 for(const entry of htmlFiles){
   const original=await readFile(join(root,entry.name),'utf8');
-  const source=original.replace(/\b(href|src)="(style\.min\.css|script\.min\.js)(?:\?[^"]*)?"/g,
-    (_,attribute,file)=>`${attribute}="${file}?v=${release}"`);
+  const source=enrichMetadata(original,entry.name).replace(/\b(href|src)="(\/?)(style\.min\.css|script\.min\.js)(?:\?[^"]*)?"/g,
+    (_,attribute,prefix,file)=>`${attribute}="${prefix}${file}?v=${release}"`);
   // GitHub Pages serves the tracked root files; keep them in sync with dist.
   if(source!==original)await writeFile(join(root,entry.name),source);
   const output=await minifyHtml(source,{

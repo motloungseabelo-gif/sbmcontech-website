@@ -1,5 +1,3 @@
 User-agent: *
 Allow: /
-Disallow: /construction.html
-Disallow: /atelier.html
-Sitemap: https://sbmcontech.co.za/sitemap.xml
+Sitemap: https://www.sbmcontech.co.za/sitemap.xml

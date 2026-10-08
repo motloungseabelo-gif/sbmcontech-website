@@ -13,19 +13,25 @@
       toggle?.setAttribute('aria-expanded', 'false');
     };
     const progress = $('#scrollProgress'), top = $('#backToTop');
-    let uiRaf = 0, idle = 0, timer = 0;
+    let uiRaf = 0, idle = 0, timer = 0, layoutDirty = true, scrollRange = 1, headerHeight = 76;
     const paintScrollUI = () => {
       uiRaf = 0;
-      const height = document.documentElement.scrollHeight - innerHeight;
-      if (progress) progress.style.width = `${Math.max(0, Math.min(100, height > 0 ? scrollY / height * 100 : 0))}%`;
+      // Read layout only when it changes, before writing compositor-only progress.
+      if (layoutDirty) {
+        scrollRange = document.documentElement.scrollHeight - innerHeight;
+        headerHeight = header?.getBoundingClientRect().height || 76;
+        document.documentElement.style.setProperty('--site-header-height', `${headerHeight}px`);
+        layoutDirty = false;
+      }
+      if (progress) progress.style.transform = `scaleX(${Math.max(0, Math.min(1, scrollRange > 0 ? scrollY / scrollRange : 0))})`;
       top?.classList.toggle('show', scrollY > 420);
-      if (header) {
+      if (header && nav?.classList.contains('show')) {
         const box = header.getBoundingClientRect();
-        document.documentElement.style.setProperty('--site-header-height', `${box.height}px`);
-        if (nav?.classList.contains('show')) nav.style.maxHeight = `${Math.max(0, innerHeight - box.bottom)}px`;
+        nav.style.maxHeight = `${Math.max(0, innerHeight - box.bottom)}px`;
       }
     };
     const queue = () => { if (!uiRaf) uiRaf = requestAnimationFrame(paintScrollUI); };
+    const layoutChanged = () => { layoutDirty = true; queue(); };
     if (toggle && nav) {
       toggle.addEventListener('click', () => {
         const open = toggle.getAttribute('aria-expanded') !== 'true';
@@ -45,10 +51,10 @@
     $$('[data-year]').forEach(element => { element.textContent = new Date().getFullYear(); });
     paintScrollUI();
     addEventListener('scroll', queue, { passive: true, signal });
-    addEventListener('resize', queue, { passive: true, signal });
-    addEventListener('load', queue, { capture: true, signal });
+    addEventListener('resize', layoutChanged, { passive: true, signal });
+    addEventListener('load', layoutChanged, { capture: true, signal });
     top?.addEventListener('click', () => scrollTo({ top: 0, behavior: reducedMotion() ? 'instant' : 'smooth' }), { signal });
-    const observer = 'ResizeObserver' in window ? new ResizeObserver(queue) : null;
+    const observer = 'ResizeObserver' in window ? new ResizeObserver(layoutChanged) : null;
     if (header) observer?.observe(header);
     observer?.observe(document.documentElement);
     if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
@@ -77,6 +83,7 @@
       current = Math.max(0, Math.min(steps.length - 1, index));
       steps.forEach((step, number) => { step.classList.toggle('active', number === current); });
       if (progress) progress.textContent = `${String(current + 1).padStart(2, '0')} / ${String(steps.length).padStart(2, '0')}`;
+      $('#scopeProgressBar')?.style.setProperty('transform', `scaleX(${current + 1})`);
       if (current === steps.length - 1) generateBrief();
       const heading = steps[current].querySelector('h2');
       heading?.setAttribute('tabindex', '-1');
@@ -129,6 +136,8 @@ if(/whatsapp|message|lead|customer|booking|quote/.test(problem)&&!tags.includes(
       try {
         const response = await fetch(form.action, { method: 'POST', body: data, headers: { Accept: 'application/json' }, signal: request.signal });
         if (!response.ok) throw new Error('Submission unavailable');
+        const result = await response.json();
+        if (result.ok !== true) throw new Error('Submission was not accepted');
         submitted = true;
         location.href = 'thank-you.html';
       } catch {
@@ -237,12 +246,31 @@ if(/whatsapp|message|lead|customer|booking|quote/.test(problem)&&!tags.includes(
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => { if (entry.isIntersecting) { activate(entry.target); observer.unobserve(entry.target); } });
     }, { rootMargin: '250px 0px', threshold: 0 });
-    targets.forEach(element => {
-      const box = element.getBoundingClientRect();
+    // Batch geometry reads before class changes so reveals cannot force repeated layout.
+    const measured = targets.map(element => ({ element, box: element.getBoundingClientRect() }));
+    measured.forEach(({ element, box }) => {
       if (box.top <= innerHeight + 250 && box.bottom >= -250) activate(element);
       else observer.observe(element);
     });
     return () => observer.disconnect();
+  }
+
+  function decorativeMotion() {
+    if (!('IntersectionObserver' in window) || reduce.matches) return () => {};
+    const targets = qa('.system-visual,.ticker,.arch-map,.status,.footer-status,.lab-health');
+    const visible = new Set();
+    const update = () => targets.forEach(target => target.classList.toggle('motion-paused', document.hidden || !visible.has(target)));
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target));
+      update();
+    }, { rootMargin: '100px' });
+    targets.forEach(target => observer.observe(target));
+    document.addEventListener('visibilitychange', update);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', update);
+      targets.forEach(target => target.classList.remove('motion-paused'));
+    };
   }
 
   function scroll3D() {
@@ -378,7 +406,7 @@ if(/whatsapp|message|lead|customer|booking|quote/.test(problem)&&!tags.includes(
       event.preventDefault();
       if (navigation) return;
       document.body.classList.add('page-leaving');
-      navigation = setTimeout(() => { location.href = url.href; }, 300);
+      navigation = setTimeout(() => { location.href = url.href; }, 160);
       reset = setTimeout(() => { navigation = 0; document.body.classList.remove('page-leaving'); }, 1500);
     }, { signal: controller.signal });
     return () => {
@@ -395,8 +423,8 @@ if(/whatsapp|message|lead|customer|booking|quote/.test(problem)&&!tags.includes(
     document.body.classList.toggle('scroll-3d', !reduce.matches);
     document.body.classList.toggle('motion-lite', lite);
     preparePortraits();
-    const stopReveals = sectionReveals(), depth = scroll3D(), stopPointer = pointerDepth(depth.queue), stopWipe = pageWipe();
-    dispose = () => { stopReveals(); stopPointer(); depth.cleanup(); stopWipe(); };
+    const stopReveals = sectionReveals(), stopDecorative = decorativeMotion(), depth = scroll3D(), stopPointer = pointerDepth(depth.queue), stopWipe = pageWipe();
+    dispose = () => { stopReveals(); stopDecorative(); stopPointer(); depth.cleanup(); stopWipe(); };
     started = true;
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
@@ -418,35 +446,54 @@ if(/whatsapp|message|lead|customer|booking|quote/.test(problem)&&!tags.includes(
     preview.innerHTML='<span class="lael-preview-orb" aria-hidden="true"></span><span><b>ASK LAEL</b><small>SBM ASSISTANT</small></span>';
     document.body.appendChild(preview);
     document.body.classList.add('lael-preview-ready');
-    let loading=false;
-    preview.addEventListener('click',()=>{
+    let loading=false,attempt=0;
+    const open=()=>{
+      const launcher=document.querySelector('.lael-launcher');
+      if(launcher){document.dispatchEvent(new Event('sbm:open-lael'));return}
       if(loading)return;
       loading=true;
+      const turn=++attempt;
       preview.disabled=true;
+      preview.setAttribute('aria-busy','true');
       preview.querySelector('b').textContent='OPENING…';
       const stylesheet=document.createElement('link');
+      let script,deadline;
       const recover=()=>{
+        if(turn!==attempt)return;
+        clearTimeout(deadline);
         loading=false;
         preview.disabled=false;
-        preview.querySelector('b').textContent='ASK LAEL';
+        preview.removeAttribute('aria-busy');
+        preview.querySelector('b').textContent='TRY LAEL AGAIN';
+        preview.querySelector('small').textContent='COULD NOT LOAD';
         stylesheet.remove();
+        script?.remove();
       };
+      deadline=setTimeout(recover,12000);
       stylesheet.rel='stylesheet';
       stylesheet.href=assetUrl('lael.min.css');
       stylesheet.addEventListener('load',()=>{
-        const script=document.createElement('script');
+        if(!loading||turn!==attempt)return;
+        script=document.createElement('script');
         script.src=assetUrl('lael.min.js');
         script.async=true;
         script.addEventListener('load',()=>{
+          if(turn!==attempt)return;
+          clearTimeout(deadline);
+          if(!document.querySelector('.lael-launcher')){recover();return}
           preview.remove();
           document.body.classList.remove('lael-preview-ready');
-          document.querySelector('.lael-launcher')?.click();
+          document.dispatchEvent(new Event('sbm:open-lael'));
         },{once:true});
         script.addEventListener('error',()=>{script.remove();recover()},{once:true});
         document.body.appendChild(script);
       },{once:true});
       stylesheet.addEventListener('error',recover,{once:true});
       document.head.appendChild(stylesheet);
+    };
+    preview.addEventListener('click',open);
+    document.addEventListener('click',event=>{
+      if(event.target.closest('[data-open-lael]'))open();
     });
   }
   function scheduleLauncher(){

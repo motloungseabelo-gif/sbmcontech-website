@@ -12,8 +12,19 @@ for(const file of htmlFiles){
   const html=await readFile(join(root,file),'utf8');
   if(file!=='insights.html'&&html.includes('href="insights.html"'))hasInsightsEntryPoint=true;
   assert(html.includes('width=device-width,initial-scale=1,viewport-fit=cover'),`${file}: responsive viewport metadata is missing.`);
+  assert(html.includes('class="skip-link"') && html.includes('id="main-content"'),`${file}: keyboard skip navigation is missing.`);
+  const canonical=html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
+  if(canonical)assert(canonical.startsWith('https://www.sbmcontech.co.za/'),`${file}: canonical domain differs from the publishing domain.`);
+  if(!html.includes('content="noindex,follow"')){
+    const structured=html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
+    try{
+      const graph=JSON.parse(structured)['@graph'];
+      assert(graph.some(item=>item['@type']==='Organization')&&graph.some(item=>item['@type']==='WebPage'),`${file}: linked entity metadata is incomplete.`);
+      if(file==='services.html')assert(graph.find(item=>item['@type']==='FAQPage')?.mainEntity.length===4,'Service FAQ metadata must match the four visible questions.');
+    }catch{failures.push(`${file}: structured data is not valid JSON.`)}
+  }
   assert(!/fonts\.googleapis\.com|fonts\.gstatic\.com/.test(html),`${file}: external Google Fonts dependency remains.`);
-  assert(/href="style\.min\.css(?:\?v=[a-f0-9]{12})?"/.test(html),`${file}: minified stylesheet is not referenced.`);
+  assert(/href="\/?style\.min\.css(?:\?v=[a-f0-9]{12})?"/.test(html),`${file}: minified stylesheet is not referenced.`);
   const externalScripts=[...html.matchAll(/<script\b([^>]*)>/gi)]
     .map(match=>match[1])
     .filter(attributes=>/\bsrc=/.test(attributes));
@@ -28,7 +39,7 @@ for(const file of htmlFiles){
   const references=[...html.matchAll(/\b(?:href|src)="([^"]+)"/gi)].map(match=>match[1]);
   for(const reference of references){
     if(/^(?:https?:|mailto:|tel:|data:|#)/i.test(reference))continue;
-    const localPath=decodeURIComponent(reference.split(/[?#]/)[0]);
+    const localPath=decodeURIComponent(reference.split(/[?#]/)[0]).replace(/^\/+/, '');
     if(!localPath)continue;
     try{await access(join(root,localPath))}catch{failures.push(`${file}: missing local reference ${localPath}.`)}
   }

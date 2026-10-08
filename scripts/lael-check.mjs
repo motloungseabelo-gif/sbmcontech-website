@@ -287,6 +287,30 @@ try {
   check(guide.requests.length === 0, 'The local guide called a backend.');
   await guide.context.close();
 
+  // A stalled lazy asset must recover and permit a clean retry.
+  const retryContext = await browser.newContext({ serviceWorkers: 'block' });
+  await retryContext.route('**/*', route => new URL(route.request().url()).origin === origin ? route.continue() : route.abort());
+  await retryContext.route('**/lael-config.json', route => route.fulfill({ contentType: 'application/json', body: '{"apiUrl":""}' }));
+  const retryPage = await retryContext.newPage();
+  retryPage.on('pageerror', error => errors.push(error.message));
+  await retryPage.goto(`${origin}/index.html`);
+  await retryPage.locator('.lael-preview').waitFor();
+  const assetGate = gate();
+  const stalledAsset = async route => { await assetGate.promise; await route.continue().catch(() => undefined); };
+  await retryPage.route('**/lael.min.css*', stalledAsset);
+  await retryPage.clock.install();
+  await retryPage.locator('.lael-preview').click();
+  await retryPage.clock.fastForward(13000);
+  check(await retryPage.locator('.lael-preview').isEnabled(), 'A stalled assistant asset left its launcher disabled.');
+  check((await retryPage.locator('.lael-preview').innerText()).includes('TRY LAEL AGAIN'), 'A stalled assistant asset did not provide a retry action.');
+  await retryPage.unroute('**/lael.min.css*', stalledAsset);
+  assetGate.release();
+  await retryPage.clock.resume();
+  await retryPage.locator('.lael-preview').click();
+  await retryPage.locator('.lael-panel').waitFor();
+  check(await retryPage.locator('.lael-root').count() === 1 && await retryPage.locator('.lael-preview').count() === 0, 'Assistant recovery created duplicate launchers.');
+  await retryContext.close();
+
   for (const viewport of [{ width: 768, height: 900 }, { width: 412, height: 823 }, { width: 320, height: 700 }, { width: 823, height: 412 }]) {
     const mobile = await chat({ apiUrl: '', viewport, mobile: viewport.width <= 412 });
     await mobile.send('Where is your contact page?');

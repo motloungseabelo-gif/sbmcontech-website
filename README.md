@@ -68,11 +68,13 @@ Measured with the same local mobile Lighthouse profile:
 
 See [MOBILE-PERFORMANCE-UPDATE.md](MOBILE-PERFORMANCE-UPDATE.md) for the detailed change and measurement record.
 
+The October 2026 design and reliability refinement keeps the established palette, pages and integrations while tightening mobile spacing, making the hero network interactive, improving scroll rendering and adding consistent structured metadata. See [PREMIUM-RELEASE-2026-10-08.md](PREMIUM-RELEASE-2026-10-08.md) for the audit, validation and rollback record.
+
 ## Local development
 
 Requirements:
 
-- Node.js 20 or newer
+- Node.js 22.13 or newer (Node.js 24 LTS recommended; used by CI)
 - Google Chrome or Chromium for responsive and Lighthouse checks
 
 ```bash
@@ -103,7 +105,7 @@ npm run quality
 
 The project uses ESLint, Stylelint, responsive browser testing, asset and internal-link budgets, and Lighthouse CI. GitHub Actions executes these checks on pull requests and changes to `main`.
 
-Responsive checks cover all 15 root HTML pages at 320, 412, 768, 1024 and 1440 pixels. The site regression suite exercises rapid scroll jumps, wheel direction changes, scrollbar dragging, keyboard and emulated touch scrolling, loading and resize changes, reduced motion, fragment navigation, history lifecycle recovery, project-form validation and mocked failures, and offline cache recovery. LAEL browser regressions cover semantic links, safe rich-content handling, speech input and cancellation, conversation order, configuration races, deadlines, malformed responses, microphone cleanup and emulated keyboard viewports. Form and AI requests in the browser suites use controlled mocks. Speech tests inspect utterances; they do not claim physical-device audio playback.
+Responsive checks cover all 15 root HTML pages at 320, 360, 375, 390, 414, 430, 768, 820, 1024, 1280, 1440, 1920 and 2560 pixels. The site regression suite exercises rapid scroll jumps, wheel direction changes, scrollbar dragging, keyboard and emulated touch scrolling, loading and resize changes, reduced motion, fragment navigation, history lifecycle recovery, project-form validation and mocked failures, and offline cache recovery. LAEL browser regressions cover semantic links, safe rich-content handling, speech input and cancellation, conversation order, configuration races, deadlines, malformed responses, microphone cleanup and emulated keyboard viewports. Form and AI requests in the browser suites use controlled mocks. Speech tests inspect utterances; they do not claim physical-device audio playback.
 
 Production builds recreate `dist/` from scratch, preventing obsolete files from remaining after a page or asset is removed.
 
@@ -115,7 +117,7 @@ The site is deployed through GitHub Pages from the `main` branch and uses the cu
 
 ## Repository notes
 
-- `styles/sbm-1.css` through `styles/sbm-5.css` are the source styles.
+- `styles/sbm-1.css` through `styles/sbm-6.css` are the source styles.
 - `style.min.css` and `script.min.js` are generated production assets.
 - `scripts/build.mjs` creates the clean deployable `dist/` output.
 - `sw.js` controls the versioned browser cache.

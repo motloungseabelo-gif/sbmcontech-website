@@ -30,6 +30,12 @@ try {
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error' && /not focusable/.test(message.text())) errors.push(message.text()); });
   const frames = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  const missingPage = await page.goto(`${origin}/missing/deep-route`);
+  check(missingPage.status() === 404, 'An unknown route did not return 404.');
+  check(await page.locator('a[href="/index.html"]').isVisible(), 'The nested 404 page cannot return to the homepage.');
+  check(await page.locator('h1').evaluate(heading => parseFloat(getComputedStyle(heading).fontSize) > 30), 'The nested 404 page lost its stylesheet.');
+  const malformed = await fetch(`${origin}/%ZZ`);
+  check(malformed.status === 400, 'A malformed URL was not safely rejected.');
   async function readable(label) {
     await frames();
     const result = await page.evaluate(() => {
@@ -56,7 +62,7 @@ try {
       await page.evaluate(f => scrollTo({ top: f * (document.documentElement.scrollHeight - innerHeight), behavior: 'instant' }), fraction);
       await readable(`${path}: distant jump ${fraction}`);
     }
-    await page.waitForTimeout(200);
+    await page.waitForFunction(() => Math.abs(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--scroll-velocity'))) < .001, null, { timeout: 1500 });
     check(Math.abs(await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--scroll-velocity')))) < .001, `${path}: velocity tilt did not settle.`);
   }
 
@@ -86,8 +92,9 @@ try {
     await readable('scrollbar dragging up');
   } else throw new Error('This browser did not expose a scrollbar for the drag check.');
 
-  await page.locator('.lael-preview').click();
+  await page.locator('[data-open-lael]').click();
   await page.locator('.lael-panel').waitFor();
+  check(await page.locator('.lael-launcher').getAttribute('aria-expanded') === 'true', 'The inline LAEL action did not open the assistant.');
   await page.mouse.move(400, 400);
   await page.mouse.wheel(0, 3000);
   await readable('rapid scroll with LAEL open');
@@ -113,7 +120,7 @@ try {
     await readable(`direct anchor ${fragment}`);
   }
   await page.goto(`${origin}/index.html`);
-  await page.locator('a[href="services.html#automation"]').click();
+  await page.locator('a.node[href="services.html#automation"]').click();
   await page.waitForURL('**/services.html#automation');
   await readable('navigation to a distant section');
   // A retained page must not keep a navigation wipe when restored from the back/forward cache.
@@ -204,6 +211,14 @@ try {
   await response.fulfill({ status: 503, contentType: 'application/json', body: '{}' });
   await page.waitForFunction(() => !document.querySelector('#scopeSubmit').disabled);
   check((await page.locator('#formStatus').innerText()).includes('Transmission failed'), 'Failed submission did not provide a recovery message.');
+  for (const body of ['{"ok":false,"errors":[{"message":"Not accepted"}]}', 'not-json']) {
+    await page.locator('#scopeSubmit').click();
+    await page.waitForFunction(() => document.querySelector('#projectForm').getAttribute('aria-busy') === 'true');
+    await response.fulfill({ status: 200, contentType: 'application/json', body });
+    await page.waitForFunction(() => !document.querySelector('#scopeSubmit').disabled);
+    check(page.url().endsWith('/contact.html'), 'An unconfirmed submission incorrectly reached the success page.');
+    check((await page.locator('#formStatus').innerText()).includes('Transmission failed'), 'An invalid success response did not allow recovery.');
+  }
   await page.clock.install();
   await page.locator('#scopeSubmit').click();
   await page.waitForFunction(() => document.querySelector('#projectForm').getAttribute('aria-busy') === 'true');
@@ -230,6 +245,11 @@ try {
   const fallback = await noScripts.newPage();
   await fallback.goto(`${origin}/index.html`);
   check(await fallback.locator('.reveal').evaluateAll(elements => elements.every(element => getComputedStyle(element).opacity === '1')), 'Missing scripts leave the content invisible.');
+  await fallback.setViewportSize({ width: 320, height: 700 });
+  check(await fallback.locator('#siteNav a[href="services.html"]').isVisible(), 'Mobile navigation is inaccessible without JavaScript.');
+  await fallback.goto(`${origin}/contact.html`);
+  check(await fallback.locator('.scope-step').evaluateAll(steps => steps.every(step => getComputedStyle(step).display !== 'none')), 'The enquiry fallback hides required form fields.');
+  check(await fallback.locator('#scopeSubmit').isVisible(), 'The enquiry fallback has no submit action.');
   await noScripts.close();
 
   const cachedContext = await browser.newContext({ viewport: { width: 1440, height: 900 } });

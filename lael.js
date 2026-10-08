@@ -2,7 +2,7 @@
 (() => {
   'use strict';
 
-  if (document.querySelector('.lael-root')) return;
+  if (document.querySelector('.lael-root') || (document.currentScript && !document.currentScript.isConnected)) return;
 
   const root = document.createElement('div');
   root.className = 'lael-root';
@@ -232,6 +232,7 @@
   }
 
   launcher.addEventListener('click', () => togglePanel(panel.hidden));
+  document.addEventListener('sbm:open-lael', () => togglePanel(true));
   el('.lael-close').addEventListener('click', () => togglePanel(false));
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && !panel.hidden) togglePanel(false);

@@ -1,7 +1,7 @@
 import { createReadStream } from 'node:fs';
 import { readFile, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { extname, join, normalize, resolve } from 'node:path';
+import { extname, join, normalize, resolve, sep } from 'node:path';
 import { createBrotliCompress, createGzip } from 'node:zlib';
 
 const root=resolve(process.env.SERVE_ROOT||process.cwd());
@@ -31,11 +31,13 @@ function cacheControl(extension,fileName){
 }
 
 function safePath(urlPath){
-  const decoded=decodeURIComponent(urlPath.split('?')[0]);
+  let decoded;
+  try { decoded=decodeURIComponent(urlPath.split('?')[0]); }
+  catch { return null; }
   const requested=decoded==='/'?'/index.html':decoded;
   const normalized=normalize(requested).replace(/^(\.\.(\/|\\|$))+/, '');
   const filePath=resolve(join(root,normalized));
-  return filePath.startsWith(root)?filePath:null;
+  return filePath===root||filePath.startsWith(`${root}${sep}`)?filePath:null;
 }
 
 const server=createServer(async(req,res)=>{

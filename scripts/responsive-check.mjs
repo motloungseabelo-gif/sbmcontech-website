@@ -36,10 +36,18 @@ const browser=await chromium.launch({
 const pages=(await readdir(process.cwd())).filter(file=>file.endsWith('.html'));
 const viewports=[
   {width:320,height:700},
-  {width:412,height:823},
+  {width:360,height:800},
+  {width:375,height:812},
+  {width:390,height:844},
+  {width:414,height:896},
+  {width:430,height:932},
   {width:768,height:900},
+  {width:820,height:1180},
   {width:1024,height:900},
-  {width:1440,height:900}
+  {width:1280,height:900},
+  {width:1440,height:900},
+  {width:1920,height:1080},
+  {width:2560,height:1440}
 ];
 const failures=[];
 const {apiUrl}=JSON.parse(await readFile('lael-config.json','utf8'));

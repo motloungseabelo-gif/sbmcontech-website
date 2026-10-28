@@ -37,6 +37,10 @@ The panel follows the visual viewport above a mobile keyboard and compacts on sh
 
 The primary navigation is intentionally limited to five clear actions. Industries, Insights and SBM Labs remain available through the footer and contextual links.
 
+## LAEL 3–7–12 private prototype
+
+The isolated [private prototype](prototype/README.md) adds SQLite-backed memory, an observable seven-stage loop, a twelve-cycle working-context reset, cancellation and checkpoint recovery. Run it with `npm run prototype`. It uses its own local server or separate Cloudflare configuration, with explicit local-guide/AI modes; it does not change the public assistant's permissions or storage behaviour.
+
 ## Performance and mobile update
 
 The August 2026 optimization preserved the existing visual identity and page structure while adding:

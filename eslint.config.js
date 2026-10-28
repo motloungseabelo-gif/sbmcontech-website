@@ -49,7 +49,7 @@ export default [
     }
   },
   {
-    files: ['worker/src/*.js'],
+    files: ['worker/src/*.js', 'prototype/*.js', 'prototype/ui/*.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -61,7 +61,7 @@ export default [
     }
   },
   {
-    files: ['scripts/*.mjs'],
+    files: ['scripts/*.mjs', 'prototype/*.mjs', 'tests/lael-prototype.test.mjs'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -75,7 +75,7 @@ export default [
     }
   },
   {
-    files: ['scripts/responsive-check.mjs', 'scripts/site-check.mjs', 'scripts/lael-check.mjs'],
+    files: ['scripts/responsive-check.mjs', 'scripts/site-check.mjs', 'scripts/lael-check.mjs', 'scripts/lael-prototype-check.mjs'],
     languageOptions: {
       globals: {
         ...globals.node,

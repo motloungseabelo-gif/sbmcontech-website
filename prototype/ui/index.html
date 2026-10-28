@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="data:,">
+  <title>LAEL · Private prototype</title>
+  <link rel="stylesheet" href="/app.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Lael prototype home"><span class="brand-mark">L</span><span>LAEL<span class="brand-detail">SBM CONTECH INDUSTRIES</span></span></a>
+    <div class="header-actions"><span class="prototype-tag">PRIVATE PROTOTYPE</span><span id="connection" class="connection" role="status">Connecting…</span><button id="disconnect" class="button quiet" type="button" hidden>Lock workspace</button></div>
+  </header>
+
+  <section id="access-panel" class="access card" hidden aria-labelledby="access-title">
+    <p class="eyebrow">YOUR PRIVATE WORKSPACE</p><h1 id="access-title">Connect to Lael.</h1>
+    <p>Enter the access token configured for this prototype. It stays in this tab and is cleared when you lock or reload.</p>
+    <form id="access-form"><label for="access-token">Private access token</label><input id="access-token" type="password" required minlength="32" maxlength="512" autocomplete="off" spellcheck="false"><button class="button primary" type="submit">Open workspace <span aria-hidden="true">↗</span></button></form>
+  </section>
+
+  <div id="notice" class="notice" role="alert" hidden></div>
+
+  <main id="workspace" hidden>
+    <section class="intro" aria-labelledby="page-title">
+      <div><p class="eyebrow">THE 3–7–12 EXPERIMENT</p><h1 id="page-title">A mind with continuity.</h1><p class="intro-copy">Memory, reasoning and action. A working cycle you can inspect, interrupt and reset.</p></div>
+      <div class="mode-card"><span class="mode-dot" aria-hidden="true"></span><div><strong id="mode-label">Local guide</strong><span id="mode-detail">Persistent memory · no external actions</span></div></div>
+    </section>
+
+    <section class="metrics" aria-label="Cycle architecture">
+      <article class="metric"><span class="metric-number">3</span><div><h2>Connected functions</h2><p>Memory · Reasoning · Action</p></div><span class="metric-index">01</span></article>
+      <article class="metric"><span class="metric-number">7</span><div><h2>Stages per turn</h2><p>Receive through Remember</p></div><span class="metric-index">02</span></article>
+      <article class="metric accent"><span class="metric-number">12</span><div><h2>Cycles to a checkpoint</h2><p><span id="round-value">0</span> processed in epoch <span id="epoch-value">1</span></p></div><span class="metric-index">03</span></article>
+    </section>
+
+    <div class="workspace-grid">
+      <section class="conversation card" aria-labelledby="conversation-title">
+        <div class="section-heading"><div><p class="eyebrow">WORKING CONTEXT</p><h2 id="conversation-title">Talk to Lael</h2></div><span id="turn-state" class="small-pill">Ready</span></div>
+        <p id="guide-note" class="guide-note">Local guide mode handles saved-memory recall and cycle explanations. Broader AI replies require a server-side model connection.</p>
+        <ol id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions"></ol>
+        <div id="empty-conversation" class="empty-conversation"><div class="orb" aria-hidden="true">L</div><h3>Start with something worth remembering.</h3><p>Add an approved fact in the memory panel, then ask Lael what it remembers.</p></div>
+        <div class="suggestions"><button type="button" data-prompt="What do you remember?">Show saved memory <span aria-hidden="true">↗</span></button><button type="button" data-prompt="Explain your 3–7–12 cycle.">Explain the cycle <span aria-hidden="true">↗</span></button></div>
+        <form id="chat-form" class="composer"><label class="sr-only" for="message">Message Lael</label><textarea id="message" rows="2" maxlength="1400" required placeholder="Ask Lael a question…"></textarea><div class="composer-footer"><span>Chat alone does not save a memory.</span><button id="send" class="button primary" type="submit">Send <span aria-hidden="true">↗</span></button></div></form>
+        <p id="result-status" class="result-status" role="status">Responses and saved memories only. External tools are not connected.</p>
+      </section>
+
+      <aside class="memory card" aria-labelledby="memory-title">
+        <div class="section-heading"><div><p class="eyebrow">RETAINED BY YOU</p><h2 id="memory-title">Saved memory</h2></div><span id="memory-count" class="count">0</span></div>
+        <p class="muted">Facts you explicitly save survive resets and restarts. They are user supplied, rather than independently verified.</p>
+        <form id="memory-form"><label for="memory-text">Add a memory</label><textarea id="memory-text" rows="3" maxlength="500" required placeholder="For example: Our project is called Lael."></textarea><p class="field-note">Saved facts may be used to answer your questions when AI is connected.</p><button id="save-memory" type="submit" class="button secondary">Save memory <span aria-hidden="true">+</span></button></form>
+        <p id="memory-empty" class="memory-empty">No saved memories yet.</p><ul id="memory-list" class="memory-list"></ul>
+        <div class="reset-box"><p class="eyebrow">A CLEAN WORKING SPACE</p><button id="reset" type="button" class="button quiet">Reset working context <span aria-hidden="true">↻</span></button><p>Clears the working conversation. Saved facts and task receipts remain.</p></div>
+      </aside>
+
+      <section class="cycle card" aria-labelledby="cycle-title">
+        <div class="section-heading"><div><p class="eyebrow">OBSERVABLE PROCESS</p><h2 id="cycle-title">The seven-stage cycle</h2></div><div class="cycle-actions"><button id="cancel" class="button quiet" type="button" hidden>Cancel turn</button><button id="resume" class="button secondary" type="button" hidden>Resume checkpoint</button></div></div>
+        <p id="cycle-caption" class="muted">Stages update from real server checkpoints.</p><ol id="stages" class="stages" aria-label="Processing stages"></ol>
+        <div class="epoch-progress"><label for="round-progress">Consolidation boundary</label><progress id="round-progress" max="12" value="0">0 of 12</progress><span id="cycle-total">0 processed turns</span></div>
+      </section>
+
+      <section class="checkpoint card" aria-labelledby="checkpoint-title"><p class="eyebrow">CONTINUITY</p><h2 id="checkpoint-title">Ready for the next cycle.</h2><p id="checkpoint-detail">After twelve processed cycles, Lael records a checkpoint and clears temporary context while retaining approved memories.</p><dl><div><dt>Saved memories</dt><dd id="retained-count">0</dd></div><div><dt>Soft resets</dt><dd id="reset-count">0</dd></div></dl><p class="field-note">A reset clears context. It does not retrain the model or establish consciousness.</p></section>
+    </div>
+
+    <section class="exchange" aria-labelledby="exchange-title"><div class="exchange-heading"><p class="eyebrow">INFORMATION IN THREES</p><h2 id="exchange-title">The latest exchange</h2></div><div class="exchange-grid"><article><span>01 / OBSERVATION</span><p id="observation">Waiting for an observation.</p></article><article><span>02 / INTERPRETATION</span><p id="interpretation">Waiting for an interpretation.</p></article><article><span>03 / PROPOSAL</span><p id="proposal">Waiting for a response or action.</p></article></div></section>
+    <footer class="footer"><span>LAEL / SBM CONTECH INDUSTRIES</span><span>Experimental architecture · 3–7–12 is a design hypothesis</span></footer>
+  </main>
+</body>
+</html>

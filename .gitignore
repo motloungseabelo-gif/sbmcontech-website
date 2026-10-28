@@ -11,3 +11,4 @@ lighthouse-results/
 .dev.vars
 .dev.vars.*
 .wrangler/
+prototype/.data/

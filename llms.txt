@@ -1,0 +1,18 @@
+# SBM ConTech Industries
+
+> South African technology company building software, websites, AI automation and connected infrastructure.
+
+Official website: https://www.sbmcontech.co.za/
+Business email: sbmcontechindustries@gmail.com
+Business telephone: +27640262150
+Location: South Africa. A street address is not published.
+
+## Primary pages
+- [Solutions](https://www.sbmcontech.co.za/services.html): Software, websites, automation and connected infrastructure.
+- [Company](https://www.sbmcontech.co.za/about.html): Purpose and operating principles.
+- [Work](https://www.sbmcontech.co.za/work.html): Internal platforms and clearly labelled demonstrations.
+- [Contact](https://www.sbmcontech.co.za/contact.html): Enquiry form and direct business contacts.
+- [Privacy](https://www.sbmcontech.co.za/privacy-policy.html): Information handling and optional analytics.
+
+## Accuracy notes
+SBM Labs is a simulated front-end prototype, not a deployed customer installation. LAEL guides visitors; binding quotes and commitments come from the team. No guaranteed business results or ranking claims are made. This is a reference for systems that choose to read it, not a Google ranking mechanism.

@@ -75,7 +75,7 @@ export default [
     }
   },
   {
-    files: ['scripts/responsive-check.mjs', 'scripts/site-check.mjs', 'scripts/lael-check.mjs'],
+    files: ['scripts/responsive-check.mjs', 'scripts/site-check.mjs', 'scripts/lael-check.mjs', 'scripts/redesign-browser.mjs'],
     languageOptions: {
       globals: {
         ...globals.node,

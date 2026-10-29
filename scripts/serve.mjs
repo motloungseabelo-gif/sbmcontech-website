@@ -8,6 +8,9 @@ const root=resolve(process.env.SERVE_ROOT||process.cwd());
 const port=Number(process.env.PORT||4173);
 const host=process.env.HOST||'127.0.0.1';
 const types={
+  '.avif':'image/avif',
+  '.ico':'image/x-icon',
+  '.webmanifest':'application/manifest+json',
   '.css':'text/css; charset=utf-8',
   '.html':'text/html; charset=utf-8',
   '.jpeg':'image/jpeg',

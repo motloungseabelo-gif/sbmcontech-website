@@ -1,77 +1,36 @@
-import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, rm, writeFile, readdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
-import { minify as minifyCss } from 'csso';
-import { minify as minifyHtml } from 'html-minifier-terser';
-import { minify as minifyJavaScript } from 'terser';
-import { enrichMetadata } from './seo.mjs';
-
-const root=process.cwd();
-const dist=join(root,'dist');
-const cssSources=[1,2,3,4,5,6].map(number=>join(root,'styles',`sbm-${number}.css`));
-
-const css=(await Promise.all(cssSources.map(file=>readFile(file,'utf8')))).join('\n').replaceAll('../fonts/','fonts/');
-const minifiedCss=minifyCss(css,{restructure:true}).css;
-const sourceJavaScript=await readFile(join(root,'script.js'),'utf8');
-const minifiedJavaScript=await minifyJavaScript(sourceJavaScript,{
-  compress:{passes:2},
-  mangle:true,
-  format:{comments:false}
-});
-
-if(!minifiedJavaScript.code)throw new Error('JavaScript minification produced no output.');
-
-const laelCss=minifyCss(await readFile(join(root,'lael.css'),'utf8'),{restructure:true}).css;
-const laelJavaScript=await minifyJavaScript(await readFile(join(root,'lael.js'),'utf8'),{
-  compress:{passes:2},
-  mangle:true,
-  format:{comments:false}
-});
-if(!laelJavaScript.code)throw new Error('Lael minification produced no output.');
-
-// A new URL bypasses both an older service worker and long-lived HTTP caches.
-// Include the lazy assistant so an assistant-only change also refreshes its loader.
-const release=createHash('sha256').update(minifiedCss).update(minifiedJavaScript.code)
-  .update(laelCss).update(laelJavaScript.code).digest('hex').slice(0,12);
-const serviceWorker=(await readFile(join(root,'sw.js'),'utf8'))
-  .replace(/^const CACHE_NAME='[^']+';/m,`const CACHE_NAME='sbm-contech-v4-${release}';`)
-  .replace(/'\.\/(style\.min\.css|script\.min\.js)(?:\?[^']*)?'/g,(_,file)=>`'./${file}?v=${release}'`);
-await writeFile(join(root,'sw.js'),serviceWorker);
-
-await writeFile(join(root,'style.min.css'),minifiedCss);
-await writeFile(join(root,'script.min.js'),minifiedJavaScript.code);
-await writeFile(join(root,'lael.min.css'),laelCss);
-await writeFile(join(root,'lael.min.js'),laelJavaScript.code);
-await rm(dist,{recursive:true,force:true});
-await mkdir(dist,{recursive:true});
-
-const entries=await readdir(root,{withFileTypes:true});
-const htmlFiles=entries.filter(entry=>entry.isFile()&&entry.name.endsWith('.html'));
-for(const entry of htmlFiles){
-  const original=await readFile(join(root,entry.name),'utf8');
-  const source=enrichMetadata(original,entry.name).replace(/\b(href|src)="(\/?)(style\.min\.css|script\.min\.js)(?:\?[^"]*)?"/g,
-    (_,attribute,prefix,file)=>`${attribute}="${prefix}${file}?v=${release}"`);
-  // GitHub Pages serves the tracked root files; keep them in sync with dist.
-  if(source!==original)await writeFile(join(root,entry.name),source);
-  const output=await minifyHtml(source,{
-    collapseWhitespace:true,
-    conservativeCollapse:true,
-    removeComments:true,
-    removeRedundantAttributes:true,
-    removeScriptTypeAttributes:true,
-    removeStyleLinkTypeAttributes:true
-  });
-  await writeFile(join(dist,entry.name),output);
+import { minify as cssMinify } from 'csso';
+import { minify as jsMinify } from 'terser';
+import { minify as htmlMinify } from 'html-minifier-terser';
+import { pages } from './pages.mjs';
+import { renderPage } from './layout.mjs';
+const config = JSON.parse(await readFile('site.config.json','utf8'));
+if (config.url !== `https://${(await readFile('CNAME','utf8')).trim()}`) throw new Error('Canonical URL does not match existing production CNAME.');
+if (config.analytics.measurementId && !/^G-[A-Z0-9]+$/.test(config.analytics.measurementId)) throw new Error('Invalid analytics property ID.');
+const css = cssMinify(await readFile('styles/site.css','utf8')).css;
+const js = (await jsMinify(await readFile('script.js','utf8'),{compress:{passes:2},mangle:true,format:{comments:false}})).code;
+const laelCss = cssMinify(await readFile('lael.css','utf8')).css;
+const laelJs = (await jsMinify(await readFile('lael.js','utf8'),{compress:{passes:2},mangle:true,format:{comments:false}})).code;
+const release = createHash('sha256').update(css).update(js).update(laelCss).update(laelJs).update(JSON.stringify(config)).digest('hex').slice(0,12);
+await mkdir('dist',{recursive:true});
+for(const entry of await readdir('dist')) await rm(join('dist',entry),{recursive:true,force:true});
+for (const [name,value] of Object.entries({'style.min.css':css,'script.min.js':js,'lael.min.css':laelCss,'lael.min.js':laelJs})) { await writeFile(name,value); await writeFile(join('dist',name),value); }
+for (const page of pages) {
+  const html = await htmlMinify(renderPage(page,config,release),{collapseWhitespace:true,conservativeCollapse:true,removeComments:true,removeRedundantAttributes:true,removeScriptTypeAttributes:true});
+  await writeFile(page.file,html); await writeFile(join('dist',page.file),html);
 }
-
-for(const file of ['CNAME','robots.txt','sitemap.xml','style.min.css','script.min.js','lael.min.css','lael.min.js','lael-config.json','sw.js']){
-  await cp(join(root,file),join(dist,file));
-}
-for(const directory of ['fonts','images']){
-  await cp(join(root,directory),join(dist,directory),{recursive:true});
-}
-
-const headers=`/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Permissions-Policy: camera=(), microphone=(self), geolocation=()\n\n/*.html\n  Cache-Control: no-cache\n\n/sw.js\n  Cache-Control: no-cache\n\n/*.css\n  Cache-Control: public, max-age=86400, stale-while-revalidate=604800\n\n/*.js\n  Cache-Control: public, max-age=86400, stale-while-revalidate=604800\n\n/fonts/*\n  Cache-Control: public, max-age=31536000, immutable\n\n/images/*\n  Cache-Control: public, max-age=31536000, immutable\n`;
-await writeFile(join(dist,'_headers'),headers);
-
-console.log(`Built ${htmlFiles.length} pages, ${minifiedCss.length} CSS bytes and ${minifiedJavaScript.code.length} JavaScript bytes.`);
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages.filter(p=>!p.noindex).map(p=>`  <url><loc>${config.url}/${p.file === 'index.html'?'':p.file}</loc><lastmod>${config.updated}</lastmod></url>`).join('\n')}\n</urlset>\n`;
+await writeFile('sitemap.xml',sitemap);
+await writeFile('robots.txt',`User-agent: *\nAllow: /\nDisallow: /sbm%20contech%20website/\n\nSitemap: ${config.url}/sitemap.xml\n`);
+const manifest = {name:config.name,short_name:'SBM ConTech',start_url:'/',scope:'/',display:'browser',background_color:'#f8f6f2',theme_color:'#14283d',icons:[{src:'/images/redesign/favicon-192.png',sizes:'192x192',type:'image/png'},{src:'/images/redesign/favicon-512.png',sizes:'512x512',type:'image/png'}]};
+await writeFile('site.webmanifest',JSON.stringify(manifest));
+await writeFile('llms.txt',`# SBM ConTech Industries\n\n> South African technology company building software, websites, AI automation and connected infrastructure.\n\nOfficial website: ${config.url}/\nBusiness email: ${config.email}\nBusiness telephone: ${config.telephone}\nLocation: South Africa. A street address is not published.\n\n## Primary pages\n- [Solutions](${config.url}/services.html): Software, websites, automation and connected infrastructure.\n- [Company](${config.url}/about.html): Purpose and operating principles.\n- [Work](${config.url}/work.html): Internal platforms and clearly labelled demonstrations.\n- [Contact](${config.url}/contact.html): Enquiry form and direct business contacts.\n- [Privacy](${config.url}/privacy-policy.html): Information handling and optional analytics.\n\n## Accuracy notes\nSBM Labs is a simulated front-end prototype, not a deployed customer installation. LAEL guides visitors; binding quotes and commitments come from the team. No guaranteed business results or ranking claims are made. This is a reference for systems that choose to read it, not a Google ranking mechanism.\n`);
+for (const file of ['CNAME','robots.txt','sitemap.xml','llms.txt','site.webmanifest','favicon.ico','lael-config.json','sw.js']) await cp(file,join('dist',file));
+await mkdir('dist/fonts',{recursive:true});
+for (const file of ['dm-sans-latin.woff2','DM-Sans-LICENSE.txt']) await cp(join('fonts',file),join('dist/fonts',file));
+await mkdir('dist/images/redesign',{recursive:true});
+for (const file of await readdir('images/redesign')) if (!file.includes('-source.')) await cp(join('images/redesign',file),join('dist/images/redesign',file));
+await writeFile('dist/.nojekyll',''); await writeFile('.nojekyll','');
+console.log(`Built ${pages.length} static pages; release ${release}; CSS ${css.length} B; initial JS ${js.length} B. LAEL loads on demand.`);

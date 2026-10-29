@@ -26,7 +26,8 @@ try {
   for(const width of [320,390,760,820,1024,1440,1920]) {
     await page.setViewportSize({width,height:900});
     for(const item of pages) {
-      await page.goto(`${origin}/${item.file}`);
+      await page.goto(`${origin}/${item.file}`,{waitUntil:'domcontentloaded'});
+      await page.evaluate(async()=>{await document.fonts.ready;});
       assert(await page.locator('h1').isVisible(),`${width} ${item.file} visible content`);
       const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);
       assert(!overflow,`${width} ${item.file} horizontal overflow`);
@@ -66,7 +67,7 @@ try {
   await page.goto(origin+'/app.html');await page.locator('[data-lab="gate"]').click();assert.equal(await page.locator('#gateState').innerText(),'Open');
   await page.locator('[data-scene="away"]').click();assert.equal(await page.locator('#lightingState').innerText(),'Off');assert.equal(await page.locator('#securityState').innerText(),'Armed');
   for(let i=0;i<20;i++)await page.locator('[data-temperature="1"]').click();assert.equal(await page.locator('#temperature').innerText(),'30');
-  await page.goto(origin+'/a/missing/page');assert.equal((await page.locator('h1').innerText()).includes('right company'),true);assert(await page.locator('.brand img').evaluate(image=>image.complete&&image.naturalWidth>0));
+  await page.goto(origin+'/a/missing/page');assert.equal((await page.locator('h1').innerText()).includes('right company'),true);assert(await page.locator('#siteHeader .brand img').evaluate(image=>image.complete&&image.naturalWidth>0));
   await page.goto(origin+'/services.html');await page.locator('.faq-item summary').first().click();assert(await page.locator('.faq-item').first().getAttribute('open')!==null);
   await context.close();
   const analytics=await browser.newContext({serviceWorkers:'block'});let analyticsRequests=0;
@@ -80,8 +81,8 @@ try {
   assert.equal(analyticsRequests,1,'Consent loads analytics once');
   const events=await a.evaluate(()=>window.dataLayer.map(args=>Array.from(args)));
   const view=events.find(args=>args[0]==='event'&&args[1]==='page_view');assert(view&&view[2].page_location===origin+'/','Page view is sanitized');
-  await a.getByRole('link',{name:'Cookie settings',exact:true}).click();await a.getByRole('button',{name:'Essential only',exact:true}).click();
-  await a.waitForLoadState('load');assert.equal(await a.locator('script[src*="googletagmanager"]').count(),0,'Revocation unloads analytics');
+  await a.getByRole('link',{name:'Cookie settings',exact:true}).click();
+  await Promise.all([a.waitForEvent('load'),a.getByRole('button',{name:'Essential only',exact:true}).click()]);assert.equal(await a.locator('script[src*="googletagmanager"]').count(),0,'Revocation unloads analytics');
   await analytics.close();
   assert.deepEqual(errors,[],'No browser runtime errors');
   console.log('PASS: 16 pages × 7 widths; scroll, mobile menu and CTA; form validation/loading/failure/success; duplicate prevention; truthful thank-you; prototypes; nested 404; FAQ; analytics consent and revocation. No real submissions sent.');

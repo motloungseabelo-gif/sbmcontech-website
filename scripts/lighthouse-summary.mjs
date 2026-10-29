@@ -1,6 +1,6 @@
 import {readdir,readFile,appendFile} from 'node:fs/promises';
 async function reports(folder) {
-  const entries=await readdir(folder,{withFileTypes:true});
+  const entries=await readdir(folder,{withFileTypes:true}).catch(error=>{if(error.code==='ENOENT')return [];throw error;});
   for(const entry of entries) {
     const path=folder+'/'+entry.name;
     if(entry.isDirectory())await reports(path);

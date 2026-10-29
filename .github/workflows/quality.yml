@@ -1,17 +1,14 @@
 name: Website quality
-
 on:
   pull_request:
   push:
     branches: [main]
-
 permissions:
   contents: read
-
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,4 +17,37 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run quality
+  browser:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test:browser
+  lighthouse:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
       - run: npm run lighthouse:ci
+      - name: Summarize measured Lighthouse scores
+        if: always()
+        run: node scripts/lighthouse-summary.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sbm-lighthouse-reports
+          path: lighthouse-results

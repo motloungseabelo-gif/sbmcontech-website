@@ -1,0 +1,13 @@
+{
+  "name": "SBM ConTech Industries",
+  "url": "https://www.sbmcontech.co.za",
+  "email": "sbmcontechindustries@gmail.com",
+  "telephone": "+27640262150",
+  "telephoneDisplay": "+27 64 026 2150",
+  "country": "South Africa",
+  "countryCode": "ZA",
+  "streetAddress": null,
+  "formEndpoint": "https://formspree.io/f/mvzvbavp",
+  "analytics": {"provider": "ga4", "measurementId": ""},
+  "updated": "2026-10-29"
+}

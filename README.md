@@ -1,124 +1,68 @@
-# SBM ConTech Industries Website
+# SBM ConTech Industries
 
-Official website for **SBM ConTech Industries**, a South African technology company focused on digital systems, AI automation and connected infrastructure.
+The public SBM website: **https://www.sbmcontech.co.za/**.
 
-**Live site:** [www.sbmcontech.co.za](https://www.sbmcontech.co.za)
+A calm, concise website for a South African business working across software, AI automation and connected infrastructure. Warm white, navy and bronze carry the SBM identity; a custom emblem and real infrastructure photography support the design.
 
-## Website structure
+## Develop and build
 
-- Home
-- Solutions
-- Work and system demonstrations
-- Company
-- Industries
-- Insights
-- Project scoping and contact
-- Privacy and terms
+Use Node.js 24 (minimum 22.13) and npm.
 
-## LAEL assistant
-
-The small "Ask LAEL" launcher appears across the current website after the main page finishes loading; the full assistant loads only when a visitor opens it. Visitors can ask about SBM's services, project intake, and contact routes; open relevant site pages; choose a speaking style and an English voice available on their own device; and use push-to-talk when their browser supports speech recognition. Voice replies are **off by default**. The microphone starts only when a visitor presses its button. The browser may use its own speech service to transcribe audio. Text chat remains usable without voice support.
-
-The website's built-in site guide works immediately, without a server or API key. It gives grounded answers from the approved SBM service and contact information in `lael.js`. It does not invent prices or accept bookings. Questions and answers stay in the current page and are not saved by the site guide.
-
-An optional AI endpoint is included in `worker/`. The static GitHub Pages site cannot safely hold an API key, so AI replies require a separately deployed Cloudflare Worker and an OpenAI API account. The Worker limits input length, caps output, applies a per-IP rate limit, restricts browser origins to the SBM domains, and uses `store: false`. It does not persist chat history. Browser origin checks alone are not authentication; monitor API usage and keep spending limits on the provider account before activating a public endpoint.
-
-To activate AI replies after reviewing costs and the privacy wording:
-
-1. In Cloudflare Workers & Pages, create an application by importing this GitHub repository. Set the project name to `sbm-lael-api`, use the `main` branch, leave the optional build command blank, and deploy from the repository root with the default `npx wrangler deploy` command. The root `wrangler.toml` points only to `worker/src/index.js`; the website remains hosted on GitHub Pages. Set `OPENAI_API_KEY` as a **Worker secret** under Settings > Variables and Secrets, never in the website, GitHub, or `lael-config.json`. The optional `OPENAI_MODEL` variable is set in `wrangler.toml`.
-2. Verify `POST https://<your-worker-domain>/chat` with a permitted SBM `Origin` header. The Worker needs the `LAEL_RATE_LIMITER` binding in `wrangler.toml`.
-3. Put the deployed `https://<your-worker-domain>/chat` URL in `lael-config.json` and run `npm run build`. Publish the site through the existing review and deploy process.
-
-If the AI endpoint is unavailable, LAEL says so and continues with its local site guide. Configuration loading and requests have deadlines, and one turn is sent at a time. Closing and reopening the panel preserves the conversation and any next-question draft in the current page. Navigating away cancels a pending turn; no browser storage is used for chat history.
-
-AI, local-guide and fallback replies share one safe renderer in `lael.js`. It recognises plain URLs, Markdown and HTML links, including encoded HTML, and creates text nodes and approved-protocol anchors. Known SBM destinations display labels such as **Contact page**, **Services page** and **About page**, retaining their query strings and fragments. Speech uses separate natural text; contact enquiries say **“You can reach us through our contact page.”** Failed AI replies retain an explicit unavailability message in both text and speech. Replies are completed JSON responses; there is no streaming speech path.
-
-The panel follows the visual viewport above a mobile keyboard and compacts on short screens. New questions, mute, closing the panel and page navigation cancel speech; closing or leaving also stops microphone input. Device voices vary by browser and operating system; the three speaking styles adjust delivery and do not create new synthetic voice identities.
-
-The primary navigation is intentionally limited to five clear actions. Industries, Insights and SBM Labs remain available through the footer and contextual links.
-
-## Performance and mobile update
-
-The August 2026 optimization preserved the existing visual identity and page structure while adding:
-
-- minified production HTML, CSS and JavaScript;
-- responsive WebP images with explicit dimensions;
-- lazy loading and asynchronous image decoding;
-- self-hosted fonts;
-- deferred non-essential motion and scripts;
-- service-worker caching for repeat visits;
-- Flexbox/Grid responsive refinements using relative units;
-- 44 px-equivalent touch targets and visible keyboard focus;
-- 16 px minimum form controls and long-word wrapping;
-- touchscreen-safe content that does not depend on hover;
-- a simplified five-link primary navigation;
-- removal of the former CEO and CFO profiles and image assets.
-
-Measured with the same local mobile Lighthouse profile:
-
-| Metric | Before | After |
-| --- | ---: | ---: |
-| Performance | 74 | 99 |
-| Accessibility | 94 | 100 |
-| Best Practices | 96 | 100 |
-| SEO | 100 | 100 |
-| Largest Contentful Paint | 12.2 s | 1.5 s |
-| Cumulative Layout Shift | 0 | 0 |
-| Initial transfer | 2,185 KiB | 80 KiB |
-
-See [MOBILE-PERFORMANCE-UPDATE.md](MOBILE-PERFORMANCE-UPDATE.md) for the detailed change and measurement record.
-
-The October 2026 design and reliability refinement keeps the established palette, pages and integrations while tightening mobile spacing, making the hero network interactive, improving scroll rendering and adding consistent structured metadata. See [PREMIUM-RELEASE-2026-10-08.md](PREMIUM-RELEASE-2026-10-08.md) for the audit, validation and rollback record.
-
-## Local development
-
-Requirements:
-
-- Node.js 22.13 or newer (Node.js 24 LTS recommended; used by CI)
-- Google Chrome or Chromium for responsive and Lighthouse checks
-
-```bash
+```sh
 npm ci
+npm run build
 npm run preview
 ```
 
-The preview server runs the production-style site locally with compression, cache headers and ETags.
+Open the preview URL printed by the server. GitHub Pages serves the tracked repository root from `main`. `CNAME` retains `www.sbmcontech.co.za`. The build writes root HTML and optimized assets, plus a clean `dist/` copy. The root files must be committed with source changes.
 
-## Build and quality checks
+- `scripts/pages.mjs`: page content, titles and descriptions.
+- `scripts/layout.mjs`: shared navigation, footer, social tags and linked structured data.
+- `styles/site.css`: responsive layout, with breakpoints at 360, 760, 900, 1100 and 1600 px.
+- `script.js`: menu, consent, enquiries, prototype controls and lazy LAEL loader.
+- `site.config.json`: verified business details and analytics configuration.
+- `images/redesign/`: new logo, favicons, Open Graph image and responsive real photographs.
 
-```bash
-npm run build
-npm run lint
-npm run test:performance
-npm run test:lael
-npm run test:lael-browser
-npm run test:responsive
-npm run test:site
+Run `npm run build` after edits. Minified files and HTML use a shared content-derived release identifier. The old service worker is retired and clears SBM’s previous offline caches to prevent stale pages.
+
+## Enquiries
+
+The existing Formspree endpoint is preserved. The shorter form has field-specific errors, an explicit privacy checkbox, a honeypot, duplicate-submission protection, a sending state and a 20-second deadline. Failure preserves entered values. Only an accepted `{ "ok": true }` response navigates to the thank-you page; a direct thank-you visit does not assert delivery. Without JavaScript, normal HTML form submission and provider-side validation remain available.
+
+Tests intercept all form requests; no test sends an actual enquiry. Delivery into the business mailbox and third-party account limits are not proven by mocked tests.
+
+## Analytics and cookie preferences
+
+**GA4 is prepared but inactive**, as requested. No Measurement ID was supplied. To activate, add the real public `G-...` property ID in `site.config.json`, update the privacy and cookie notices to describe the live setup, rebuild and publish. Do not place API secrets in this static repository.
+
+A valid property and explicit visitor opt-in are both required before the Google script loads. Advertising consent stays denied. Our configured page view omits query strings and referrers; our lead event sends no enquiry text, name or email. Turn off unwanted enhanced measurement, Google Signals and advertising links in the GA property. Verify provider settings before enabling collection. Rejecting removes accessible analytics cookies and reloads if the script was loaded. Preferences expire after approximately six months. Footer settings can reopen the banner at any time.
+
+## Contact and location
+
+Public email: sbmcontechindustries@gmail.com. Public business number: +27 64 026 2150. The owner chose to publish **South Africa only**. No street address or map coordinates are invented.
+
+## Search, sharing and AI discovery
+
+Each page has its own title, description, canonical URL, Open Graph and Twitter metadata. Linked Organization, WebSite, WebPage, Breadcrumb and Service entities describe the visible content; solution FAQs match the page. Country metadata uses ZA. Favicons, a web manifest, `robots.txt` and an indexable-page sitemap are included. Error, confirmation and legacy pages are `noindex`.
+
+`llms.txt` is an optional factual reference for systems that read it. Google does not use special AI tags or this file as a ranking mechanism. Discoverability comes from crawlable content, correct company identity, internal links, structured metadata and a good page experience. Google chooses its own result titles and snippets and needs time to recrawl. See [Google’s guidance](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide).
+
+## LAEL
+
+The established assistant, safe link renderer and Cloudflare backend remain. Its CSS and JavaScript load when a visitor opens LAEL. The configuration remains in `lael-config.json`; the existing Worker in `worker/src/index.js` is a separate deployment and is not changed by publishing the website. Voice and microphone remain optional. The local guide is available when the AI connection is unavailable. No API keys belong in browser files.
+
+## Checks
+
+```sh
+npm run quality
+npm run test:browser
 npm run lighthouse:ci
 ```
 
-Run the main non-Lighthouse quality suite with:
+`quality` builds the 16 pages, checks titles, descriptions, images, local links, fragments, metadata, sitemap and transfer budgets, then runs Worker security/failure tests. `test:browser` uses installed Chrome (`CHROME_PATH` may override the path) for seven viewport widths, rapid scrolling, mobile navigation, enquiry validation and mocked submission states, prototype controls, nested 404 paths, consent and tracking revocation, plus LAEL’s renderer/voice/fallback regression suite.
 
-```bash
-npm run quality
-```
+GitHub Actions runs these checks and a mobile Lighthouse audit of Home, Solutions and Contact. The performance gate is **98/100**, accessibility **98/100**, SEO **98/100**, with explicit LCP and layout-shift limits. Reports are uploaded as `sbm-lighthouse-reports`; the actual scores appear in the workflow summary. Lab scores vary with hardware, network and third-party providers; a passing CI result is not a guarantee of every visitor’s experience.
 
-The project uses ESLint, Stylelint, responsive browser testing, asset and internal-link budgets, and Lighthouse CI. GitHub Actions executes these checks on pull requests and changes to `main`.
+Production recovery checkpoint: `checkpoint/sbm-before-redesign-20261029` (commit `82493dbd2b3258116c7963c76a56220f010e1c4a`).
 
-Responsive checks cover all 15 root HTML pages at 320, 360, 375, 390, 414, 430, 768, 820, 1024, 1280, 1440, 1920 and 2560 pixels. The site regression suite exercises rapid scroll jumps, wheel direction changes, scrollbar dragging, keyboard and emulated touch scrolling, loading and resize changes, reduced motion, fragment navigation, history lifecycle recovery, project-form validation and mocked failures, and offline cache recovery. LAEL browser regressions cover semantic links, safe rich-content handling, speech input and cancellation, conversation order, configuration races, deadlines, malformed responses, microphone cleanup and emulated keyboard viewports. Form and AI requests in the browser suites use controlled mocks. Speech tests inspect utterances; they do not claim physical-device audio playback.
-
-Production builds recreate `dist/` from scratch, preventing obsolete files from remaining after a page or asset is removed.
-
-Each build gives the stylesheet, website script and lazy-loaded LAEL assets a shared content-derived release URL. The tracked root pages and offline cache use the same release, so returning visitors receive updated code even when an older service worker or browser cache is present. Service-worker installation refreshes its core assets and removes only previous SBM caches.
-
-## Deployment
-
-The site is deployed through GitHub Pages from the `main` branch and uses the custom domain defined in `CNAME`. Changes should be made in a branch, validated by GitHub Actions, reviewed through a pull request, and merged only after all checks pass.
-
-## Repository notes
-
-- `styles/sbm-1.css` through `styles/sbm-6.css` are the source styles.
-- `style.min.css` and `script.min.js` are generated production assets.
-- `scripts/build.mjs` creates the clean deployable `dist/` output.
-- `sw.js` controls the versioned browser cache.
-- `.github/workflows/quality.yml` defines the automated quality gate.
+See [brand and photo notes](docs/BRAND-ASSETS.md).

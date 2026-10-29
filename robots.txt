@@ -1,3 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /sbm%20contech%20website/
+
 Sitemap: https://www.sbmcontech.co.za/sitemap.xml

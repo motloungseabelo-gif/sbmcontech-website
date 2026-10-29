@@ -11,3 +11,5 @@ lighthouse-results/
 .dev.vars
 .dev.vars.*
 .wrangler/
+
+images/redesign/*-source.jpg

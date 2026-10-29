@@ -1,6 +1,6 @@
 {
   "name": "sbmcontech-website",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -10,15 +10,16 @@
     "build": "node scripts/build.mjs",
     "lint": "npm run lint:js && npm run lint:css",
     "lint:js": "eslint script.js lael.js sw.js scripts/*.mjs worker/src/*.js",
-    "lint:css": "stylelint \"styles/**/*.css\" lael.css",
-    "test:performance": "node scripts/performance-budget.mjs",
+    "lint:css": "stylelint styles/site.css lael.css",
+    "test:performance": "node scripts/quality.mjs",
     "test:lael": "node --test tests/lael-worker.test.mjs",
     "test:lael-browser": "node scripts/lael-check.mjs",
-    "test:responsive": "node scripts/responsive-check.mjs",
-    "test:site": "node scripts/site-check.mjs",
-    "quality": "npm run build && npm run lint && npm run test:performance && npm run test:lael && npm run test:lael-browser && npm run test:responsive && npm run test:site",
+    "test:responsive": "node scripts/redesign-browser.mjs",
+    "test:site": "node scripts/redesign-browser.mjs",
+    "quality": "npm run build && npm run lint && node scripts/quality.mjs && npm run test:lael && node --check script.js",
     "preview": "node scripts/serve.mjs",
-    "lighthouse:ci": "lhci autorun --config=.lighthouserc.cjs"
+    "lighthouse:ci": "lhci autorun --config=.lighthouserc.cjs",
+    "test:browser": "node scripts/redesign-browser.mjs && npm run test:lael-browser"
   },
   "devDependencies": {
     "@lhci/cli": "0.15.1",

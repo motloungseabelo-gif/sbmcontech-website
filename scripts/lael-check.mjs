@@ -71,6 +71,8 @@ async function chat({ apiUrl = endpoint, configurationGate, configurationStatus 
   const page = await context.newPage();
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`${origin}/index.html`);
+  const cookieChoice = page.getByRole('button', { name: 'Essential only', exact: true });
+  if (await cookieChoice.isVisible()) await cookieChoice.click();
   await page.locator('.lael-preview').click();
   await page.locator('.lael-panel').waitFor();
   if (voice) await page.locator('.lael-voice-toggle').click();

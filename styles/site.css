@@ -25,3 +25,5 @@
 
 .lael-root.lael-compact{bottom:calc(8px + var(--lael-viewport-bottom,0px))!important}
 .lael-root.lael-compact .lael-panel{height:calc(var(--lael-viewport-height,100dvh) - 2rem)!important;min-height:0!important}
+/* Keep supporting copy readable on small screens. */
+.consent-field>label,.form-card .small,.field-hint,.optional,.contact-details span:first-child,.footer-bottom,.cookie-banner p,.cookie-actions button,.lael-preview,.eyebrow{font-size:.75rem}
